@@ -3,3 +3,4 @@ redis
 Cython
 click
 setuptools
+Brotli

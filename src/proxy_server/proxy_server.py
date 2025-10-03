@@ -1,14 +1,20 @@
-from src.cache_manager import CacheManager
-from src.load_balancer import LoadBalancer
-from src.server import Server
-from src.balance_strategy import BalancingStrategy
+from src.cache_manager.cache_manager import CacheManager
+from src.load_balancer.load_balancer import LoadBalancer
+from src.load_balancer.server import Server
+from src.load_balancer.balance_strategy import BalancingStrategy
 import logging
 from typing import Optional
 import aiohttp
 from aiohttp import web, ClientSession
+import asyncio
+import sys
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Suppress Windows asyncio connection reset errors
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 class CachingProxyServer:
@@ -102,10 +108,12 @@ class CachingProxyServer:
                 response_body = await origin_response.read()
                 response_headers = dict(origin_response.headers)
 
-                for header in ['Connection', 'Keep-Alive', 'Transfer-Encoding', 
-                              'TE', 'Trailer', 'Proxy-Authorization', 'Proxy-Authenticate']:
+                # Remove hop-by-hop headers
+                for header in ['Connection', 'Keep-Alive', 'Transfer-Encoding',
+                              'TE', 'Trailer', 'Proxy-Authorization', 'Proxy-Authenticate',
+                              'Content-Encoding']:
                     response_headers.pop(header, None)
-                
+
                 if is_cacheable and 200 <= origin_response.status < 300:
                     cache_data = {
                         'body': response_body,

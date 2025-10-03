@@ -1569,16 +1569,16 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager {
   int default_ttl;
   PyObject *redis_host;
   int redis_port;
-  PyObject *redis_cluster;
+  int use_cluster;
 };
 
 
-/* "src/cache_manager/cache_manager.pyx":32
- *                 )
+/* "src/cache_manager/cache_manager.pyx":24
+ *             self.use_cluster = use_cluster
  * 
  *     async def connect(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(
+ *             if self.use_cluster:
 */
 struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect {
   PyObject_HEAD
@@ -1587,7 +1587,7 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct__connec
 
 
 /* "src/cache_manager/cache_manager.pyx":40
- *             )
+ *                 )
  * 
  *     async def close(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client:
@@ -1604,7 +1604,7 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_1_close
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             data = await self.redis_client.get(cache_key)
 */
 struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_2_get {
   PyObject_HEAD
@@ -1618,7 +1618,7 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_2_get {
 };
 
 
-/* "src/cache_manager/cache_manager.pyx":77
+/* "src/cache_manager/cache_manager.pyx":74
  * 
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):             # <<<<<<<<<<<<<<
@@ -1639,12 +1639,12 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set {
 };
 
 
-/* "src/cache_manager/cache_manager.pyx":94
+/* "src/cache_manager/cache_manager.pyx":88
  * 
  * 
  *     async def delete(self, str cache_key) -> bool:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             return bool(await self.redis_client.delete(cache_key))
 */
 struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete {
   PyObject_HEAD
@@ -1657,7 +1657,7 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delet
 };
 
 
-/* "src/cache_manager/cache_manager.pyx":104
+/* "src/cache_manager/cache_manager.pyx":95
  *             return False
  * 
  *     async def clear_all(self) -> bool:             # <<<<<<<<<<<<<<
@@ -1669,7 +1669,6 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear
   PyObject *__pyx_v_cursor;
   PyObject *__pyx_v_e;
   PyObject *__pyx_v_keys;
-  PyObject *__pyx_v_node;
   struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self;
   PyObject *__pyx_t_0;
   PyObject *__pyx_t_1;
@@ -1677,7 +1676,7 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear
 };
 
 
-/* "src/cache_manager/cache_manager.pyx":130
+/* "src/cache_manager/cache_manager.pyx":114
  *             return False
  * 
  *     async def get_stats(self) -> Dict[str, int]:             # <<<<<<<<<<<<<<
@@ -1689,9 +1688,8 @@ struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_s
   PyObject *__pyx_v_cursor;
   PyObject *__pyx_v_e;
   PyObject *__pyx_v_keys;
-  PyObject *__pyx_v_node;
   struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self;
-  PyObject *__pyx_v_total_keys;
+  Py_ssize_t __pyx_v_total_keys;
   PyObject *__pyx_t_0;
   PyObject *__pyx_t_1;
   PyObject *__pyx_t_2;
@@ -2024,6 +2022,9 @@ static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
         __Pyx__ArgTypeTest(obj, type, name, exact))
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
 
+/* RejectKeywords.proto */
+static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds);
+
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 #define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
@@ -2071,27 +2072,6 @@ static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_ve
 static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
 #endif
 
-/* PyObjectVectorCallKwBuilder.proto */
-CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-#if CYTHON_VECTORCALL
-#if PY_VERSION_HEX >= 0x03090000
-#define __Pyx_Object_Vectorcall_CallFromBuilder PyObject_Vectorcall
-#else
-#define __Pyx_Object_Vectorcall_CallFromBuilder _PyObject_Vectorcall
-#endif
-#define __Pyx_MakeVectorcallBuilderKwds(n) PyTuple_New(n)
-static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-#else
-#define __Pyx_Object_Vectorcall_CallFromBuilder __Pyx_PyObject_FastCallDict
-#define __Pyx_MakeVectorcallBuilderKwds(n) __Pyx_PyDict_NewPresized(n)
-#define __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n) PyDict_SetItem(builder, key, value)
-#define __Pyx_VectorcallBuilder_AddArgStr(key, value, builder, args, n) PyDict_SetItemString(builder, key, value)
-#endif
-
-/* RejectKeywords.proto */
-static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds);
-
 /* PyUnicode_Unicode.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Unicode(PyObject *obj);
 
@@ -2117,6 +2097,24 @@ static CYTHON_INLINE PyObject* __Pyx_PyUnicode_From_int(int value, Py_ssize_t wi
 /* JoinPyUnicode.proto */
 static PyObject* __Pyx_PyUnicode_Join(PyObject** values, Py_ssize_t value_count, Py_ssize_t result_ulength,
                                       Py_UCS4 max_char);
+
+/* PyObjectVectorCallKwBuilder.proto */
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+#if CYTHON_VECTORCALL
+#if PY_VERSION_HEX >= 0x03090000
+#define __Pyx_Object_Vectorcall_CallFromBuilder PyObject_Vectorcall
+#else
+#define __Pyx_Object_Vectorcall_CallFromBuilder _PyObject_Vectorcall
+#endif
+#define __Pyx_MakeVectorcallBuilderKwds(n) PyTuple_New(n)
+static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+#else
+#define __Pyx_Object_Vectorcall_CallFromBuilder __Pyx_PyObject_FastCallDict
+#define __Pyx_MakeVectorcallBuilderKwds(n) __Pyx_PyDict_NewPresized(n)
+#define __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n) PyDict_SetItem(builder, key, value)
+#define __Pyx_VectorcallBuilder_AddArgStr(key, value, builder, args, n) PyDict_SetItemString(builder, key, value)
+#endif
 
 /* LimitedApiGetTypeDict.proto */
 #if CYTHON_COMPILING_IN_LIMITED_API
@@ -2769,14 +2767,11 @@ static const char __pyx_k_bool[] = "bool";
 static const char __pyx_k_data[] = "data";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_func[] = "__func__";
-static const char __pyx_k_host[] = "host";
 static const char __pyx_k_json[] = "json";
 static const char __pyx_k_keys[] = "keys";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_next[] = "next";
-static const char __pyx_k_node[] = "node";
-static const char __pyx_k_port[] = "port";
 static const char __pyx_k_scan[] = "scan";
 static const char __pyx_k_self[] = "self";
 static const char __pyx_k_send[] = "send";
@@ -2832,7 +2827,6 @@ static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_JJ_t_q_XQ[] = "\320\004J\320J]\320]^\330\010\017\210t\320\023'\240q\250\010\260\005\260X\270Q";
 static const char __pyx_k_cache_key[] = "cache_key";
 static const char __pyx_k_clear_all[] = "clear_all";
-static const char __pyx_k_get_nodes[] = "get_nodes";
 static const char __pyx_k_get_stats[] = "get_stats";
 static const char __pyx_k_hexdigest[] = "hexdigest";
 static const char __pyx_k_isenabled[] = "isenabled";
@@ -2861,20 +2855,18 @@ static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_use_setstate[] = "use_setstate";
 static const char __pyx_k_cluster_nodes[] = "cluster_nodes";
 static const char __pyx_k_redis_asyncio[] = "redis.asyncio";
-static const char __pyx_k_redis_cluster[] = "redis.cluster";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_response_data[] = "response_data";
 static const char __pyx_k_Cache_get_error[] = "Cache get error: ";
 static const char __pyx_k_Cache_set_error[] = "Cache set error: ";
 static const char __pyx_k_accept_encoding[] = "accept-encoding";
 static const char __pyx_k_accept_language[] = "accept-language";
-static const char __pyx_k_decode_response[] = "decode_response";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_CacheManager_get[] = "CacheManager.get";
 static const char __pyx_k_CacheManager_set[] = "CacheManager.set";
 static const char __pyx_k_decode_responses[] = "decode_responses";
-static const char __pyx_k_redis_connection[] = "redis_connection";
+static const char __pyx_k_AsyncRedisCluster[] = "AsyncRedisCluster";
 static const char __pyx_k_Cache_clear_error[] = "Cache clear error: ";
 static const char __pyx_k_CacheManager_close[] = "CacheManager.close";
 static const char __pyx_k_Cache_delete_error[] = "Cache delete error: ";
@@ -2884,20 +2876,21 @@ static const char __pyx_k_generate_cache_key[] = "generate_cache_key";
 static const char __pyx_k_CacheManager_delete[] = "CacheManager.delete";
 static const char __pyx_k_CacheManager_connect[] = "CacheManager.connect";
 static const char __pyx_k_Optional_Dict_str_Any[] = "Optional[Dict[str, Any]]";
+static const char __pyx_k_redis_asyncio_cluster[] = "redis.asyncio.cluster";
 static const char __pyx_k_CacheManager_clear_all[] = "CacheManager.clear_all";
 static const char __pyx_k_CacheManager_get_stats[] = "CacheManager.get_stats";
 static const char __pyx_k_pyx_unpickle_CacheManager[] = "__pyx_unpickle_CacheManager";
 static const char __pyx_k_CacheManager___reduce_cython[] = "CacheManager.__reduce_cython__";
-static const char __pyx_k_hk_A_1_l_l_n_n_o_xq_7_a_nA_1[] = "\200\001\360\006\000\005\010\200\177\220h\230k\250\033\260A\330\010\r\210^\2301\330\010\016\320\016!\360\000\000\"l\002\360\000\000l\002n\002\360\000\000n\002o\002\330\004\023\220<\230x\240q\250\001\330\004\007\200|\2207\230!\330\010.\250a\250\177\270n\310A\330\004\013\2101";
+static const char __pyx_k_hk_A_1_j_j_l_l_m_xq_7_a_nA_1[] = "\200\001\360\006\000\005\010\200\177\220h\230k\250\033\260A\330\010\r\210^\2301\330\010\016\320\016!\360\000\000\"j\002\360\000\000j\002l\002\360\000\000l\002m\002\330\004\023\220<\230x\240q\250\001\330\004\007\200|\2207\230!\330\010.\250a\250\177\270n\310A\330\004\013\2101";
 static const char __pyx_k_CacheManager___setstate_cython[] = "CacheManager.__setstate_cython__";
 static const char __pyx_k_CacheManager_generate_cache_key[] = "CacheManager.generate_cache_key";
-static const char __pyx_k_T_t_6Fd_W_G1F_a_vWA_q_t_S_O7RWW[] = "\200\001\360\010\000\005\016\210T\220\036\230t\240?\260$\3206F\300d\310-\320W[\320[\\\330\004\014\210G\2201\220F\230,\240a\330\004\007\200v\210W\220A\330\010\022\220!\330\010\027\220q\340\010\027\220t\230>\250\027\260\005\260S\270\004\270O\3107\320RW\320WZ\320Z^\320^j\320jq\320qr\330\004\007\200q\330\010\017\320\017-\250T\260\021\260'\270\033\300G\3101\340\010\017\320\017-\250T\260\021\260'\270\033\300A";
+static const char __pyx_k_T_t_m4_TXXY_G1F_a_vWA_q_t_S_L_q[] = "\200\001\360\010\000\005\016\210T\220\036\230t\240?\260$\260m\3004\300}\320TX\320XY\330\004\014\210G\2201\220F\230,\240a\330\004\007\200v\210W\220A\330\010\022\220!\330\010\027\220q\340\010\027\220t\230>\250\027\260\005\260S\270\004\270L\310\007\310q\330\004\007\200q\330\010\017\320\017-\250T\260\021\260'\270\033\300G\3101\340\010\017\320\017-\250T\260\021\260'\270\033\300A";
 static const char __pyx_k_src_cache_manager_cache_manager[] = "src.cache_manager.cache_manager";
-static const char __pyx_k_Incompatible_checksums_0x_x_vs_0[] = "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))";
+static const char __pyx_k_Incompatible_checksums_0x_x_vs_0[] = "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))";
 static const char __pyx_k_Note_that_Cython_is_deliberately[] = "Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.";
 static const char __pyx_k_src_cache_manager_cache_manager_2[] = "src/cache_manager/cache_manager.pyx";
 /* #### Code section: decls ### */
-static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self, PyObject *__pyx_v_redis_host, PyObject *__pyx_v_redis_port, PyObject *__pyx_v_default_ttl, PyObject *__pyx_v_use_cluster, PyObject *__pyx_v_cluster_nodes); /* proto */
+static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self, PyObject *__pyx_v_redis_host, PyObject *__pyx_v_redis_port, PyObject *__pyx_v_default_ttl, PyObject *__pyx_v_use_cluster, CYTHON_UNUSED PyObject *__pyx_v_cluster_nodes); /* proto */
 static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_2connect(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_5close(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_8generate_cache_key(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self, PyObject *__pyx_v_method, PyObject *__pyx_v_url, PyObject *__pyx_v_header, PyObject *__pyx_v_body); /* proto */
@@ -2974,15 +2967,15 @@ typedef struct {
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop;
   PyObject *__pyx_tuple[4];
   PyObject *__pyx_codeobj_tab[11];
-  PyObject *__pyx_string_tab[147];
+  PyObject *__pyx_string_tab[141];
   PyObject *__pyx_int_0;
   PyObject *__pyx_int_100;
   PyObject *__pyx_int_1000;
   PyObject *__pyx_int_3600;
   PyObject *__pyx_int_6379;
-  PyObject *__pyx_int_34153701;
-  PyObject *__pyx_int_84260704;
-  PyObject *__pyx_int_238143301;
+  PyObject *__pyx_int_21206899;
+  PyObject *__pyx_int_218376291;
+  PyObject *__pyx_int_248923345;
   PyObject *__pyx_int_neg_1;
 /* #### Code section: module_state_contents ### */
 /* CommonTypesMetaclass.module_state_decls */
@@ -3069,47 +3062,47 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_u_ __pyx_string_tab[0]
 #define __pyx_kp_b_0 __pyx_string_tab[1]
 #define __pyx_n_u_Any __pyx_string_tab[2]
-#define __pyx_n_u_CacheManager __pyx_string_tab[3]
-#define __pyx_n_u_CacheManager___reduce_cython __pyx_string_tab[4]
-#define __pyx_n_u_CacheManager___setstate_cython __pyx_string_tab[5]
-#define __pyx_n_u_CacheManager_clear_all __pyx_string_tab[6]
-#define __pyx_n_u_CacheManager_close __pyx_string_tab[7]
-#define __pyx_n_u_CacheManager_connect __pyx_string_tab[8]
-#define __pyx_n_u_CacheManager_delete __pyx_string_tab[9]
-#define __pyx_n_u_CacheManager_generate_cache_key __pyx_string_tab[10]
-#define __pyx_n_u_CacheManager_get __pyx_string_tab[11]
-#define __pyx_n_u_CacheManager_get_stats __pyx_string_tab[12]
-#define __pyx_n_u_CacheManager_set __pyx_string_tab[13]
-#define __pyx_kp_u_Cache_clear_error __pyx_string_tab[14]
-#define __pyx_kp_u_Cache_delete_error __pyx_string_tab[15]
-#define __pyx_kp_u_Cache_get_error __pyx_string_tab[16]
-#define __pyx_kp_u_Cache_set_error __pyx_string_tab[17]
-#define __pyx_n_u_Dict __pyx_string_tab[18]
-#define __pyx_kp_u_Dict_str_int __pyx_string_tab[19]
-#define __pyx_kp_u_Incompatible_checksums_0x_x_vs_0 __pyx_string_tab[20]
-#define __pyx_n_u_List __pyx_string_tab[21]
-#define __pyx_kp_u_None __pyx_string_tab[22]
-#define __pyx_kp_u_Note_that_Cython_is_deliberately __pyx_string_tab[23]
-#define __pyx_n_u_Optional __pyx_string_tab[24]
-#define __pyx_kp_u_Optional_Dict_str_Any __pyx_string_tab[25]
-#define __pyx_n_u_PickleError __pyx_string_tab[26]
-#define __pyx_n_u_RedisCluster __pyx_string_tab[27]
-#define __pyx_kp_u_Stats_error __pyx_string_tab[28]
-#define __pyx_kp_u__2 __pyx_string_tab[29]
-#define __pyx_kp_u__3 __pyx_string_tab[30]
-#define __pyx_n_u_accept __pyx_string_tab[31]
-#define __pyx_kp_u_accept_encoding __pyx_string_tab[32]
-#define __pyx_kp_u_accept_language __pyx_string_tab[33]
-#define __pyx_kp_u_add_note __pyx_string_tab[34]
-#define __pyx_n_u_aioredis __pyx_string_tab[35]
-#define __pyx_n_u_asyncio __pyx_string_tab[36]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[37]
-#define __pyx_n_u_await __pyx_string_tab[38]
-#define __pyx_n_u_body __pyx_string_tab[39]
-#define __pyx_n_u_bool __pyx_string_tab[40]
-#define __pyx_kp_u_cache __pyx_string_tab[41]
-#define __pyx_kp_b_cache_2 __pyx_string_tab[42]
-#define __pyx_kp_u_cache_2 __pyx_string_tab[43]
+#define __pyx_n_u_AsyncRedisCluster __pyx_string_tab[3]
+#define __pyx_n_u_CacheManager __pyx_string_tab[4]
+#define __pyx_n_u_CacheManager___reduce_cython __pyx_string_tab[5]
+#define __pyx_n_u_CacheManager___setstate_cython __pyx_string_tab[6]
+#define __pyx_n_u_CacheManager_clear_all __pyx_string_tab[7]
+#define __pyx_n_u_CacheManager_close __pyx_string_tab[8]
+#define __pyx_n_u_CacheManager_connect __pyx_string_tab[9]
+#define __pyx_n_u_CacheManager_delete __pyx_string_tab[10]
+#define __pyx_n_u_CacheManager_generate_cache_key __pyx_string_tab[11]
+#define __pyx_n_u_CacheManager_get __pyx_string_tab[12]
+#define __pyx_n_u_CacheManager_get_stats __pyx_string_tab[13]
+#define __pyx_n_u_CacheManager_set __pyx_string_tab[14]
+#define __pyx_kp_u_Cache_clear_error __pyx_string_tab[15]
+#define __pyx_kp_u_Cache_delete_error __pyx_string_tab[16]
+#define __pyx_kp_u_Cache_get_error __pyx_string_tab[17]
+#define __pyx_kp_u_Cache_set_error __pyx_string_tab[18]
+#define __pyx_n_u_Dict __pyx_string_tab[19]
+#define __pyx_kp_u_Dict_str_int __pyx_string_tab[20]
+#define __pyx_kp_u_Incompatible_checksums_0x_x_vs_0 __pyx_string_tab[21]
+#define __pyx_n_u_List __pyx_string_tab[22]
+#define __pyx_kp_u_None __pyx_string_tab[23]
+#define __pyx_kp_u_Note_that_Cython_is_deliberately __pyx_string_tab[24]
+#define __pyx_n_u_Optional __pyx_string_tab[25]
+#define __pyx_kp_u_Optional_Dict_str_Any __pyx_string_tab[26]
+#define __pyx_n_u_PickleError __pyx_string_tab[27]
+#define __pyx_n_u_RedisCluster __pyx_string_tab[28]
+#define __pyx_kp_u_Stats_error __pyx_string_tab[29]
+#define __pyx_kp_u__2 __pyx_string_tab[30]
+#define __pyx_kp_u__3 __pyx_string_tab[31]
+#define __pyx_n_u_accept __pyx_string_tab[32]
+#define __pyx_kp_u_accept_encoding __pyx_string_tab[33]
+#define __pyx_kp_u_accept_language __pyx_string_tab[34]
+#define __pyx_kp_u_add_note __pyx_string_tab[35]
+#define __pyx_n_u_aioredis __pyx_string_tab[36]
+#define __pyx_n_u_asyncio __pyx_string_tab[37]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[38]
+#define __pyx_n_u_await __pyx_string_tab[39]
+#define __pyx_n_u_body __pyx_string_tab[40]
+#define __pyx_n_u_bool __pyx_string_tab[41]
+#define __pyx_kp_u_cache __pyx_string_tab[42]
+#define __pyx_kp_b_cache_2 __pyx_string_tab[43]
 #define __pyx_n_u_cache_key __pyx_string_tab[44]
 #define __pyx_n_u_clear_all __pyx_string_tab[45]
 #define __pyx_n_u_cline_in_traceback __pyx_string_tab[46]
@@ -3120,99 +3113,93 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_count __pyx_string_tab[51]
 #define __pyx_n_u_cursor __pyx_string_tab[52]
 #define __pyx_n_u_data __pyx_string_tab[53]
-#define __pyx_n_u_decode_response __pyx_string_tab[54]
-#define __pyx_n_u_decode_responses __pyx_string_tab[55]
-#define __pyx_n_u_default_ttl __pyx_string_tab[56]
-#define __pyx_n_u_delete __pyx_string_tab[57]
-#define __pyx_n_u_dict __pyx_string_tab[58]
-#define __pyx_n_u_dict_2 __pyx_string_tab[59]
-#define __pyx_kp_u_disable __pyx_string_tab[60]
-#define __pyx_n_u_dumps __pyx_string_tab[61]
-#define __pyx_n_u_e __pyx_string_tab[62]
-#define __pyx_kp_u_enable __pyx_string_tab[63]
-#define __pyx_n_u_encoding __pyx_string_tab[64]
-#define __pyx_n_u_error __pyx_string_tab[65]
-#define __pyx_n_u_from_url __pyx_string_tab[66]
-#define __pyx_n_u_func __pyx_string_tab[67]
-#define __pyx_kp_u_gc __pyx_string_tab[68]
-#define __pyx_n_u_generate_cache_key __pyx_string_tab[69]
-#define __pyx_n_u_get __pyx_string_tab[70]
-#define __pyx_n_u_get_nodes __pyx_string_tab[71]
-#define __pyx_n_u_get_stats __pyx_string_tab[72]
-#define __pyx_n_u_getstate __pyx_string_tab[73]
-#define __pyx_n_u_hashlib __pyx_string_tab[74]
-#define __pyx_n_u_header __pyx_string_tab[75]
-#define __pyx_n_u_hexdigest __pyx_string_tab[76]
-#define __pyx_n_u_host __pyx_string_tab[77]
-#define __pyx_n_u_initializing __pyx_string_tab[78]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[79]
-#define __pyx_kp_u_isenabled __pyx_string_tab[80]
-#define __pyx_n_u_items __pyx_string_tab[81]
-#define __pyx_n_u_json __pyx_string_tab[82]
-#define __pyx_n_u_keys __pyx_string_tab[83]
-#define __pyx_n_u_loads __pyx_string_tab[84]
-#define __pyx_n_u_localhost __pyx_string_tab[85]
-#define __pyx_n_u_lower __pyx_string_tab[86]
-#define __pyx_n_u_main __pyx_string_tab[87]
-#define __pyx_n_u_match __pyx_string_tab[88]
-#define __pyx_n_u_md5 __pyx_string_tab[89]
-#define __pyx_n_u_method __pyx_string_tab[90]
-#define __pyx_n_u_module __pyx_string_tab[91]
-#define __pyx_n_u_name __pyx_string_tab[92]
-#define __pyx_n_u_new __pyx_string_tab[93]
-#define __pyx_n_u_next __pyx_string_tab[94]
-#define __pyx_n_u_node __pyx_string_tab[95]
-#define __pyx_n_u_pickle __pyx_string_tab[96]
-#define __pyx_n_u_pop __pyx_string_tab[97]
-#define __pyx_n_u_port __pyx_string_tab[98]
-#define __pyx_n_u_print __pyx_string_tab[99]
-#define __pyx_n_u_pyx_PickleError __pyx_string_tab[100]
-#define __pyx_n_u_pyx_checksum __pyx_string_tab[101]
-#define __pyx_n_u_pyx_result __pyx_string_tab[102]
-#define __pyx_n_u_pyx_state __pyx_string_tab[103]
-#define __pyx_n_u_pyx_type __pyx_string_tab[104]
-#define __pyx_n_u_pyx_unpickle_CacheManager __pyx_string_tab[105]
-#define __pyx_n_u_pyx_vtable __pyx_string_tab[106]
-#define __pyx_n_u_qualname __pyx_string_tab[107]
-#define __pyx_kp_u_redis __pyx_string_tab[108]
-#define __pyx_n_u_redis_2 __pyx_string_tab[109]
-#define __pyx_n_u_redis_asyncio __pyx_string_tab[110]
-#define __pyx_n_u_redis_cluster __pyx_string_tab[111]
-#define __pyx_n_u_redis_connection __pyx_string_tab[112]
-#define __pyx_n_u_redis_host __pyx_string_tab[113]
-#define __pyx_n_u_redis_port __pyx_string_tab[114]
-#define __pyx_n_u_reduce __pyx_string_tab[115]
-#define __pyx_n_u_reduce_cython __pyx_string_tab[116]
-#define __pyx_n_u_reduce_ex __pyx_string_tab[117]
-#define __pyx_n_u_response_data __pyx_string_tab[118]
-#define __pyx_n_u_return __pyx_string_tab[119]
-#define __pyx_n_u_scan __pyx_string_tab[120]
-#define __pyx_n_u_self __pyx_string_tab[121]
-#define __pyx_n_u_send __pyx_string_tab[122]
-#define __pyx_n_u_serialized __pyx_string_tab[123]
-#define __pyx_n_u_set __pyx_string_tab[124]
-#define __pyx_n_u_set_name __pyx_string_tab[125]
-#define __pyx_n_u_setex __pyx_string_tab[126]
-#define __pyx_n_u_setstate __pyx_string_tab[127]
-#define __pyx_n_u_setstate_cython __pyx_string_tab[128]
-#define __pyx_n_u_sha256 __pyx_string_tab[129]
-#define __pyx_n_u_sort_keys __pyx_string_tab[130]
-#define __pyx_n_u_spec __pyx_string_tab[131]
-#define __pyx_n_u_src_cache_manager_cache_manager __pyx_string_tab[132]
-#define __pyx_kp_u_src_cache_manager_cache_manager_2 __pyx_string_tab[133]
-#define __pyx_n_u_state __pyx_string_tab[134]
-#define __pyx_kp_u_stringsource __pyx_string_tab[135]
-#define __pyx_n_u_test __pyx_string_tab[136]
-#define __pyx_n_u_throw __pyx_string_tab[137]
-#define __pyx_n_u_total_keys __pyx_string_tab[138]
-#define __pyx_n_u_ttl __pyx_string_tab[139]
-#define __pyx_n_u_typing __pyx_string_tab[140]
-#define __pyx_n_u_update __pyx_string_tab[141]
-#define __pyx_n_u_url __pyx_string_tab[142]
-#define __pyx_n_u_use_cluster __pyx_string_tab[143]
-#define __pyx_n_u_use_setstate __pyx_string_tab[144]
-#define __pyx_kp_u_utf_8 __pyx_string_tab[145]
-#define __pyx_n_u_value __pyx_string_tab[146]
+#define __pyx_n_u_decode_responses __pyx_string_tab[54]
+#define __pyx_n_u_default_ttl __pyx_string_tab[55]
+#define __pyx_n_u_delete __pyx_string_tab[56]
+#define __pyx_n_u_dict __pyx_string_tab[57]
+#define __pyx_n_u_dict_2 __pyx_string_tab[58]
+#define __pyx_kp_u_disable __pyx_string_tab[59]
+#define __pyx_n_u_dumps __pyx_string_tab[60]
+#define __pyx_n_u_e __pyx_string_tab[61]
+#define __pyx_kp_u_enable __pyx_string_tab[62]
+#define __pyx_n_u_encoding __pyx_string_tab[63]
+#define __pyx_n_u_error __pyx_string_tab[64]
+#define __pyx_n_u_from_url __pyx_string_tab[65]
+#define __pyx_n_u_func __pyx_string_tab[66]
+#define __pyx_kp_u_gc __pyx_string_tab[67]
+#define __pyx_n_u_generate_cache_key __pyx_string_tab[68]
+#define __pyx_n_u_get __pyx_string_tab[69]
+#define __pyx_n_u_get_stats __pyx_string_tab[70]
+#define __pyx_n_u_getstate __pyx_string_tab[71]
+#define __pyx_n_u_hashlib __pyx_string_tab[72]
+#define __pyx_n_u_header __pyx_string_tab[73]
+#define __pyx_n_u_hexdigest __pyx_string_tab[74]
+#define __pyx_n_u_initializing __pyx_string_tab[75]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[76]
+#define __pyx_kp_u_isenabled __pyx_string_tab[77]
+#define __pyx_n_u_items __pyx_string_tab[78]
+#define __pyx_n_u_json __pyx_string_tab[79]
+#define __pyx_n_u_keys __pyx_string_tab[80]
+#define __pyx_n_u_loads __pyx_string_tab[81]
+#define __pyx_n_u_localhost __pyx_string_tab[82]
+#define __pyx_n_u_lower __pyx_string_tab[83]
+#define __pyx_n_u_main __pyx_string_tab[84]
+#define __pyx_n_u_match __pyx_string_tab[85]
+#define __pyx_n_u_md5 __pyx_string_tab[86]
+#define __pyx_n_u_method __pyx_string_tab[87]
+#define __pyx_n_u_module __pyx_string_tab[88]
+#define __pyx_n_u_name __pyx_string_tab[89]
+#define __pyx_n_u_new __pyx_string_tab[90]
+#define __pyx_n_u_next __pyx_string_tab[91]
+#define __pyx_n_u_pickle __pyx_string_tab[92]
+#define __pyx_n_u_pop __pyx_string_tab[93]
+#define __pyx_n_u_print __pyx_string_tab[94]
+#define __pyx_n_u_pyx_PickleError __pyx_string_tab[95]
+#define __pyx_n_u_pyx_checksum __pyx_string_tab[96]
+#define __pyx_n_u_pyx_result __pyx_string_tab[97]
+#define __pyx_n_u_pyx_state __pyx_string_tab[98]
+#define __pyx_n_u_pyx_type __pyx_string_tab[99]
+#define __pyx_n_u_pyx_unpickle_CacheManager __pyx_string_tab[100]
+#define __pyx_n_u_pyx_vtable __pyx_string_tab[101]
+#define __pyx_n_u_qualname __pyx_string_tab[102]
+#define __pyx_kp_u_redis __pyx_string_tab[103]
+#define __pyx_n_u_redis_2 __pyx_string_tab[104]
+#define __pyx_n_u_redis_asyncio __pyx_string_tab[105]
+#define __pyx_n_u_redis_asyncio_cluster __pyx_string_tab[106]
+#define __pyx_n_u_redis_host __pyx_string_tab[107]
+#define __pyx_n_u_redis_port __pyx_string_tab[108]
+#define __pyx_n_u_reduce __pyx_string_tab[109]
+#define __pyx_n_u_reduce_cython __pyx_string_tab[110]
+#define __pyx_n_u_reduce_ex __pyx_string_tab[111]
+#define __pyx_n_u_response_data __pyx_string_tab[112]
+#define __pyx_n_u_return __pyx_string_tab[113]
+#define __pyx_n_u_scan __pyx_string_tab[114]
+#define __pyx_n_u_self __pyx_string_tab[115]
+#define __pyx_n_u_send __pyx_string_tab[116]
+#define __pyx_n_u_serialized __pyx_string_tab[117]
+#define __pyx_n_u_set __pyx_string_tab[118]
+#define __pyx_n_u_set_name __pyx_string_tab[119]
+#define __pyx_n_u_setex __pyx_string_tab[120]
+#define __pyx_n_u_setstate __pyx_string_tab[121]
+#define __pyx_n_u_setstate_cython __pyx_string_tab[122]
+#define __pyx_n_u_sha256 __pyx_string_tab[123]
+#define __pyx_n_u_sort_keys __pyx_string_tab[124]
+#define __pyx_n_u_spec __pyx_string_tab[125]
+#define __pyx_n_u_src_cache_manager_cache_manager __pyx_string_tab[126]
+#define __pyx_kp_u_src_cache_manager_cache_manager_2 __pyx_string_tab[127]
+#define __pyx_n_u_state __pyx_string_tab[128]
+#define __pyx_kp_u_stringsource __pyx_string_tab[129]
+#define __pyx_n_u_test __pyx_string_tab[130]
+#define __pyx_n_u_throw __pyx_string_tab[131]
+#define __pyx_n_u_total_keys __pyx_string_tab[132]
+#define __pyx_n_u_ttl __pyx_string_tab[133]
+#define __pyx_n_u_typing __pyx_string_tab[134]
+#define __pyx_n_u_update __pyx_string_tab[135]
+#define __pyx_n_u_url __pyx_string_tab[136]
+#define __pyx_n_u_use_cluster __pyx_string_tab[137]
+#define __pyx_n_u_use_setstate __pyx_string_tab[138]
+#define __pyx_kp_u_utf_8 __pyx_string_tab[139]
+#define __pyx_n_u_value __pyx_string_tab[140]
 /* #### Code section: module_state_clear ### */
 #if CYTHON_USE_MODULE_STATE
 static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
@@ -3251,15 +3238,15 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats);
   for (int i=0; i<4; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
   for (int i=0; i<11; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<147; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<141; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   Py_CLEAR(clear_module_state->__pyx_int_0);
   Py_CLEAR(clear_module_state->__pyx_int_100);
   Py_CLEAR(clear_module_state->__pyx_int_1000);
   Py_CLEAR(clear_module_state->__pyx_int_3600);
   Py_CLEAR(clear_module_state->__pyx_int_6379);
-  Py_CLEAR(clear_module_state->__pyx_int_34153701);
-  Py_CLEAR(clear_module_state->__pyx_int_84260704);
-  Py_CLEAR(clear_module_state->__pyx_int_238143301);
+  Py_CLEAR(clear_module_state->__pyx_int_21206899);
+  Py_CLEAR(clear_module_state->__pyx_int_218376291);
+  Py_CLEAR(clear_module_state->__pyx_int_248923345);
   Py_CLEAR(clear_module_state->__pyx_int_neg_1);
   return 0;
 }
@@ -3299,15 +3286,15 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   Py_VISIT(traverse_module_state->__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats);
   for (int i=0; i<4; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
   for (int i=0; i<11; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<147; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<141; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_0);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_100);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_1000);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_3600);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_6379);
-  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_34153701);
-  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_84260704);
-  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_238143301);
+  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_21206899);
+  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_218376291);
+  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_248923345);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_neg_1);
   return 0;
 }
@@ -3315,7 +3302,7 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
 /* #### Code section: module_code ### */
 
 /* "src/cache_manager/cache_manager.pyx":16
- *     cdef object redis_cluster
+ *     cdef bint use_cluster
  * 
  *     def __init__(self, redis_host: str = "localhost", redis_port : int = 6379,             # <<<<<<<<<<<<<<
  *                 default_ttl : int = 3600, use_cluster : bool = False, cluster_nodes : list = None):
@@ -3329,7 +3316,7 @@ static int __pyx_pw_3src_13cache_manager_13cache_manager_12CacheManager_1__init_
   PyObject *__pyx_v_redis_port = 0;
   PyObject *__pyx_v_default_ttl = 0;
   PyObject *__pyx_v_use_cluster = 0;
-  PyObject *__pyx_v_cluster_nodes = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_cluster_nodes = 0;
   CYTHON_UNUSED Py_ssize_t __pyx_nargs;
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject* values[5] = {0,0,0,0,0};
@@ -3446,7 +3433,7 @@ static int __pyx_pw_3src_13cache_manager_13cache_manager_12CacheManager_1__init_
   __pyx_r = __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__(((struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *)__pyx_v_self), __pyx_v_redis_host, __pyx_v_redis_port, __pyx_v_default_ttl, __pyx_v_use_cluster, __pyx_v_cluster_nodes);
 
   /* "src/cache_manager/cache_manager.pyx":16
- *     cdef object redis_cluster
+ *     cdef bint use_cluster
  * 
  *     def __init__(self, redis_host: str = "localhost", redis_port : int = 6379,             # <<<<<<<<<<<<<<
  *                 default_ttl : int = 3600, use_cluster : bool = False, cluster_nodes : list = None):
@@ -3470,18 +3457,11 @@ static int __pyx_pw_3src_13cache_manager_13cache_manager_12CacheManager_1__init_
   return __pyx_r;
 }
 
-static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self, PyObject *__pyx_v_redis_host, PyObject *__pyx_v_redis_port, PyObject *__pyx_v_default_ttl, PyObject *__pyx_v_use_cluster, PyObject *__pyx_v_cluster_nodes) {
-  CYTHON_UNUSED PyObject *__pyx_v_redis_cluster = NULL;
+static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__(struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *__pyx_v_self, PyObject *__pyx_v_redis_host, PyObject *__pyx_v_redis_port, PyObject *__pyx_v_default_ttl, PyObject *__pyx_v_use_cluster, CYTHON_UNUSED PyObject *__pyx_v_cluster_nodes) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
-  int __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  size_t __pyx_t_7;
-  PyObject *__pyx_t_8 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3515,7 +3495,7 @@ static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__
  *             self.redis_port = redis_port
  *             self.default_ttl = default_ttl             # <<<<<<<<<<<<<<
  *             self.redis_client = None
- *             self.redis_cluster = None
+ *             self.use_cluster = use_cluster
 */
   __pyx_t_1 = __Pyx_PyLong_As_int(__pyx_v_default_ttl); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L1_error)
   __pyx_v_self->default_ttl = __pyx_t_1;
@@ -3524,7 +3504,7 @@ static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__
  *             self.redis_port = redis_port
  *             self.default_ttl = default_ttl
  *             self.redis_client = None             # <<<<<<<<<<<<<<
- *             self.redis_cluster = None
+ *             self.use_cluster = use_cluster
  * 
 */
   __Pyx_INCREF(Py_None);
@@ -3536,99 +3516,15 @@ static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__
   /* "src/cache_manager/cache_manager.pyx":22
  *             self.default_ttl = default_ttl
  *             self.redis_client = None
- *             self.redis_cluster = None             # <<<<<<<<<<<<<<
+ *             self.use_cluster = use_cluster             # <<<<<<<<<<<<<<
  * 
- * 
+ *     async def connect(self):
 */
-  __Pyx_INCREF(Py_None);
-  __Pyx_GIVEREF(Py_None);
-  __Pyx_GOTREF(__pyx_v_self->redis_cluster);
-  __Pyx_DECREF(__pyx_v_self->redis_cluster);
-  __pyx_v_self->redis_cluster = Py_None;
-
-  /* "src/cache_manager/cache_manager.pyx":25
- * 
- * 
- *             if use_cluster and cluster_nodes:             # <<<<<<<<<<<<<<
- *                 redis_cluster = RedisCluster(
- *                     host = redis_host,
-*/
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_use_cluster); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 25, __pyx_L1_error)
-  if (__pyx_t_3) {
-  } else {
-    __pyx_t_2 = __pyx_t_3;
-    goto __pyx_L4_bool_binop_done;
-  }
-  if (__pyx_v_cluster_nodes == Py_None) __pyx_t_3 = 0;
-  else
-  {
-    Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_v_cluster_nodes);
-    if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 25, __pyx_L1_error)
-    __pyx_t_3 = (__pyx_temp != 0);
-  }
-
-  __pyx_t_2 = __pyx_t_3;
-  __pyx_L4_bool_binop_done:;
-  if (__pyx_t_2) {
-
-    /* "src/cache_manager/cache_manager.pyx":26
- * 
- *             if use_cluster and cluster_nodes:
- *                 redis_cluster = RedisCluster(             # <<<<<<<<<<<<<<
- *                     host = redis_host,
- *                     port = redis_port,
-*/
-    __pyx_t_5 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_RedisCluster); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 26, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-
-    /* "src/cache_manager/cache_manager.pyx":29
- *                     host = redis_host,
- *                     port = redis_port,
- *                     decode_response = False             # <<<<<<<<<<<<<<
- *                 )
- * 
-*/
-    __pyx_t_7 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_6))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
-      assert(__pyx_t_5);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_6);
-      __Pyx_INCREF(__pyx_t_5);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_6, __pyx__function);
-      __pyx_t_7 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 3 : 0)] = {__pyx_t_5, NULL};
-      __pyx_t_8 = __Pyx_MakeVectorcallBuilderKwds(3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_host, __pyx_v_redis_host, __pyx_t_8, __pyx_callargs+1, 0) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_port, __pyx_v_redis_port, __pyx_t_8, __pyx_callargs+1, 1) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_decode_response, Py_False, __pyx_t_8, __pyx_callargs+1, 2) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
-      __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_6, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_8);
-      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-    }
-    __pyx_v_redis_cluster = __pyx_t_4;
-    __pyx_t_4 = 0;
-
-    /* "src/cache_manager/cache_manager.pyx":25
- * 
- * 
- *             if use_cluster and cluster_nodes:             # <<<<<<<<<<<<<<
- *                 redis_cluster = RedisCluster(
- *                     host = redis_host,
-*/
-  }
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_use_cluster); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_v_self->use_cluster = __pyx_t_2;
 
   /* "src/cache_manager/cache_manager.pyx":16
- *     cdef object redis_cluster
+ *     cdef bint use_cluster
  * 
  *     def __init__(self, redis_host: str = "localhost", redis_port : int = 6379,             # <<<<<<<<<<<<<<
  *                 default_ttl : int = 3600, use_cluster : bool = False, cluster_nodes : list = None):
@@ -3639,25 +3535,20 @@ static int __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager___init__
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_redis_cluster);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "src/cache_manager/cache_manager.pyx":32
- *                 )
+/* "src/cache_manager/cache_manager.pyx":24
+ *             self.use_cluster = use_cluster
  * 
  *     async def connect(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(
+ *             if self.use_cluster:
 */
 
 /* Python wrapper */
@@ -3715,7 +3606,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_2c
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 32, __pyx_L1_error)
+    __PYX_ERR(0, 24, __pyx_L1_error)
   } else {
     __Pyx_GOTREF((PyObject *)__pyx_cur_scope);
   }
@@ -3723,7 +3614,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_2c
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4generator, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_connect, __pyx_mstate_global->__pyx_n_u_CacheManager_connect, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4generator, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_connect, __pyx_mstate_global->__pyx_n_u_CacheManager_connect, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 24, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -3760,7 +3651,8 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4g
   __Pyx_RefNannySetupContext("connect", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L5_resume_from_await;
+    case 1: goto __pyx_L6_resume_from_await;
+    case 2: goto __pyx_L7_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -3768,137 +3660,260 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4g
   __pyx_L3_first_run:;
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) PyErr_SetString(PyExc_TypeError, "can't send non-None value to a just-started coroutine");
-    __PYX_ERR(0, 32, __pyx_L1_error)
+    __PYX_ERR(0, 24, __pyx_L1_error)
   }
 
-  /* "src/cache_manager/cache_manager.pyx":33
+  /* "src/cache_manager/cache_manager.pyx":25
  * 
  *     async def connect(self):
  *         if self.redis_client is None:             # <<<<<<<<<<<<<<
- *             self.redis_client = await aioredis.from_url(
- *                 f"redis://{self.redis_host}:{self.redis_port}",
+ *             if self.use_cluster:
+ *                 # Connect to Redis cluster
 */
   __pyx_t_1 = (__pyx_cur_scope->__pyx_v_self->redis_client == Py_None);
   if (__pyx_t_1) {
 
-    /* "src/cache_manager/cache_manager.pyx":34
+    /* "src/cache_manager/cache_manager.pyx":26
  *     async def connect(self):
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(             # <<<<<<<<<<<<<<
- *                 f"redis://{self.redis_host}:{self.redis_port}",
- *                 encoding="utf-8",
+ *             if self.use_cluster:             # <<<<<<<<<<<<<<
+ *                 # Connect to Redis cluster
+ *                 self.redis_client = await AsyncRedisCluster.from_url(
 */
-    __pyx_t_3 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_aioredis); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 34, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_from_url); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 34, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (__pyx_cur_scope->__pyx_v_self->use_cluster) {
 
-    /* "src/cache_manager/cache_manager.pyx":35
+      /* "src/cache_manager/cache_manager.pyx":28
+ *             if self.use_cluster:
+ *                 # Connect to Redis cluster
+ *                 self.redis_client = await AsyncRedisCluster.from_url(             # <<<<<<<<<<<<<<
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     decode_responses=False
+*/
+      __pyx_t_3 = NULL;
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_AsyncRedisCluster); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_from_url); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 28, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+      /* "src/cache_manager/cache_manager.pyx":29
+ *                 # Connect to Redis cluster
+ *                 self.redis_client = await AsyncRedisCluster.from_url(
+ *                     f"redis://{self.redis_host}:{self.redis_port}",             # <<<<<<<<<<<<<<
+ *                     decode_responses=False
+ *                 )
+*/
+      __pyx_t_4 = __Pyx_PyUnicode_Unicode(__pyx_cur_scope->__pyx_v_self->redis_host); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 29, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_6 = __Pyx_PyUnicode_From_int(__pyx_cur_scope->__pyx_v_self->redis_port, 0, ' ', 'd'); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 29, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_7[0] = __pyx_mstate_global->__pyx_kp_u_redis;
+      __pyx_t_7[1] = __pyx_t_4;
+      __pyx_t_7[2] = __pyx_mstate_global->__pyx_kp_u_;
+      __pyx_t_7[3] = __pyx_t_6;
+      __pyx_t_8 = __Pyx_PyUnicode_Join(__pyx_t_7, 4, 8 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_4) + 1 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4));
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 29, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+      /* "src/cache_manager/cache_manager.pyx":30
+ *                 self.redis_client = await AsyncRedisCluster.from_url(
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     decode_responses=False             # <<<<<<<<<<<<<<
+ *                 )
+ *             else:
+*/
+      __pyx_t_9 = 1;
+      #if CYTHON_UNPACK_METHODS
+      if (unlikely(PyMethod_Check(__pyx_t_5))) {
+        __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_5);
+        assert(__pyx_t_3);
+        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_5);
+        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(__pyx__function);
+        __Pyx_DECREF_SET(__pyx_t_5, __pyx__function);
+        __pyx_t_9 = 0;
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_3, __pyx_t_8};
+        __pyx_t_6 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 28, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_decode_responses, Py_False, __pyx_t_6, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_5, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_6);
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+      }
+      __pyx_t_10 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_2, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (likely(__pyx_t_10 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 1;
+        return __pyx_r;
+        __pyx_L6_resume_from_await:;
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 28, __pyx_L1_error)
+        __pyx_t_2 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_2);
+      } else if (likely(__pyx_t_10 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __pyx_t_2 = __pyx_r; __pyx_r = NULL;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 28, __pyx_L1_error)
+      }
+
+      /* "src/cache_manager/cache_manager.pyx":28
+ *             if self.use_cluster:
+ *                 # Connect to Redis cluster
+ *                 self.redis_client = await AsyncRedisCluster.from_url(             # <<<<<<<<<<<<<<
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     decode_responses=False
+*/
+      __Pyx_GIVEREF(__pyx_t_2);
+      __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_self->redis_client);
+      __Pyx_DECREF(__pyx_cur_scope->__pyx_v_self->redis_client);
+      __pyx_cur_scope->__pyx_v_self->redis_client = __pyx_t_2;
+      __pyx_t_2 = 0;
+
+      /* "src/cache_manager/cache_manager.pyx":26
+ *     async def connect(self):
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(
- *                 f"redis://{self.redis_host}:{self.redis_port}",             # <<<<<<<<<<<<<<
- *                 encoding="utf-8",
- *                 decode_responses=False
+ *             if self.use_cluster:             # <<<<<<<<<<<<<<
+ *                 # Connect to Redis cluster
+ *                 self.redis_client = await AsyncRedisCluster.from_url(
 */
-    __pyx_t_4 = __Pyx_PyUnicode_Unicode(__pyx_cur_scope->__pyx_v_self->redis_host); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = __Pyx_PyUnicode_From_int(__pyx_cur_scope->__pyx_v_self->redis_port, 0, ' ', 'd'); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 35, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7[0] = __pyx_mstate_global->__pyx_kp_u_redis;
-    __pyx_t_7[1] = __pyx_t_4;
-    __pyx_t_7[2] = __pyx_mstate_global->__pyx_kp_u_;
-    __pyx_t_7[3] = __pyx_t_6;
-    __pyx_t_8 = __Pyx_PyUnicode_Join(__pyx_t_7, 4, 8 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_4) + 1 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4));
-    if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 35, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      goto __pyx_L5;
+    }
 
-    /* "src/cache_manager/cache_manager.pyx":37
- *                 f"redis://{self.redis_host}:{self.redis_port}",
- *                 encoding="utf-8",
- *                 decode_responses=False             # <<<<<<<<<<<<<<
- *             )
+    /* "src/cache_manager/cache_manager.pyx":34
+ *             else:
+ *                 # Connect to single Redis instance
+ *                 self.redis_client = await aioredis.from_url(             # <<<<<<<<<<<<<<
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     encoding="utf-8",
+*/
+    /*else*/ {
+      __pyx_t_5 = NULL;
+      __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_aioredis); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 34, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_from_url); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 34, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+      /* "src/cache_manager/cache_manager.pyx":35
+ *                 # Connect to single Redis instance
+ *                 self.redis_client = await aioredis.from_url(
+ *                     f"redis://{self.redis_host}:{self.redis_port}",             # <<<<<<<<<<<<<<
+ *                     encoding="utf-8",
+ *                     decode_responses=False
+*/
+      __pyx_t_6 = __Pyx_PyUnicode_Unicode(__pyx_cur_scope->__pyx_v_self->redis_host); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 35, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_3 = __Pyx_PyUnicode_From_int(__pyx_cur_scope->__pyx_v_self->redis_port, 0, ' ', 'd'); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_7[0] = __pyx_mstate_global->__pyx_kp_u_redis;
+      __pyx_t_7[1] = __pyx_t_6;
+      __pyx_t_7[2] = __pyx_mstate_global->__pyx_kp_u_;
+      __pyx_t_7[3] = __pyx_t_3;
+      __pyx_t_4 = __Pyx_PyUnicode_Join(__pyx_t_7, 4, 8 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6) + 1 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_3), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_6));
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "src/cache_manager/cache_manager.pyx":37
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     encoding="utf-8",
+ *                     decode_responses=False             # <<<<<<<<<<<<<<
+ *                 )
  * 
 */
-    __pyx_t_9 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_5))) {
-      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_5);
-      assert(__pyx_t_3);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_5);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_5, __pyx__function);
-      __pyx_t_9 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_3, __pyx_t_8};
-      __pyx_t_6 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 34, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_encoding, __pyx_mstate_global->__pyx_kp_u_utf_8, __pyx_t_6, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_decode_responses, Py_False, __pyx_t_6, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
-      __pyx_t_2 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_5, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_6);
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-    }
-    __pyx_t_10 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_2, &__pyx_r);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (likely(__pyx_t_10 == PYGEN_NEXT)) {
-      __Pyx_GOTREF(__pyx_r);
-      __Pyx_XGIVEREF(__pyx_r);
-      __Pyx_RefNannyFinishContext();
-      __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-      /* return from generator, awaiting value */
-      __pyx_generator->resume_label = 1;
-      return __pyx_r;
-      __pyx_L5_resume_from_await:;
-      if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 34, __pyx_L1_error)
-      __pyx_t_2 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_2);
-    } else if (likely(__pyx_t_10 == PYGEN_RETURN)) {
-      __Pyx_GOTREF(__pyx_r);
-      __pyx_t_2 = __pyx_r; __pyx_r = NULL;
-    } else {
-      __Pyx_XGOTREF(__pyx_r);
-      __PYX_ERR(0, 34, __pyx_L1_error)
-    }
+      __pyx_t_9 = 1;
+      #if CYTHON_UNPACK_METHODS
+      if (unlikely(PyMethod_Check(__pyx_t_8))) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_8);
+        assert(__pyx_t_5);
+        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
+        __Pyx_INCREF(__pyx_t_5);
+        __Pyx_INCREF(__pyx__function);
+        __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+        __pyx_t_9 = 0;
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_5, __pyx_t_4};
+        __pyx_t_3 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_encoding, __pyx_mstate_global->__pyx_kp_u_utf_8, __pyx_t_3, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_decode_responses, Py_False, __pyx_t_3, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_3);
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+      }
+      __pyx_t_10 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_2, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (likely(__pyx_t_10 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 2;
+        return __pyx_r;
+        __pyx_L7_resume_from_await:;
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 34, __pyx_L1_error)
+        __pyx_t_2 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_2);
+      } else if (likely(__pyx_t_10 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __pyx_t_2 = __pyx_r; __pyx_r = NULL;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 34, __pyx_L1_error)
+      }
 
-    /* "src/cache_manager/cache_manager.pyx":34
- *     async def connect(self):
- *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(             # <<<<<<<<<<<<<<
- *                 f"redis://{self.redis_host}:{self.redis_port}",
- *                 encoding="utf-8",
+      /* "src/cache_manager/cache_manager.pyx":34
+ *             else:
+ *                 # Connect to single Redis instance
+ *                 self.redis_client = await aioredis.from_url(             # <<<<<<<<<<<<<<
+ *                     f"redis://{self.redis_host}:{self.redis_port}",
+ *                     encoding="utf-8",
 */
-    __Pyx_GIVEREF(__pyx_t_2);
-    __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_self->redis_client);
-    __Pyx_DECREF(__pyx_cur_scope->__pyx_v_self->redis_client);
-    __pyx_cur_scope->__pyx_v_self->redis_client = __pyx_t_2;
-    __pyx_t_2 = 0;
+      __Pyx_GIVEREF(__pyx_t_2);
+      __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_self->redis_client);
+      __Pyx_DECREF(__pyx_cur_scope->__pyx_v_self->redis_client);
+      __pyx_cur_scope->__pyx_v_self->redis_client = __pyx_t_2;
+      __pyx_t_2 = 0;
+    }
+    __pyx_L5:;
 
-    /* "src/cache_manager/cache_manager.pyx":33
+    /* "src/cache_manager/cache_manager.pyx":25
  * 
  *     async def connect(self):
  *         if self.redis_client is None:             # <<<<<<<<<<<<<<
- *             self.redis_client = await aioredis.from_url(
- *                 f"redis://{self.redis_host}:{self.redis_port}",
+ *             if self.use_cluster:
+ *                 # Connect to Redis cluster
 */
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "src/cache_manager/cache_manager.pyx":32
- *                 )
+  /* "src/cache_manager/cache_manager.pyx":24
+ *             self.use_cluster = use_cluster
  * 
  *     async def connect(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(
+ *             if self.use_cluster:
 */
 
   /* function exit code */
@@ -3928,7 +3943,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_4g
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_7generator1(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "src/cache_manager/cache_manager.pyx":40
- *             )
+ *                 )
  * 
  *     async def close(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client:
@@ -4099,7 +4114,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_7g
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
   /* "src/cache_manager/cache_manager.pyx":40
- *             )
+ *                 )
  * 
  *     async def close(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client:
@@ -4866,7 +4881,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             data = await self.redis_client.get(cache_key)
 */
 
 /* Python wrapper */
@@ -5011,11 +5026,11 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  size_t __pyx_t_7;
-  __Pyx_PySendResult __pyx_t_8;
+  size_t __pyx_t_6;
+  __Pyx_PySendResult __pyx_t_7;
+  int __pyx_t_8;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
   int __pyx_t_11;
@@ -5039,7 +5054,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
   __Pyx_RefNannySetupContext("get", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L11_resume_from_await;
+    case 1: goto __pyx_L10_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -5054,8 +5069,8 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 data = self.redis_cluster.get(cache_key)
+ *             data = await self.redis_client.get(cache_key)
+ * 
 */
   {
     __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
@@ -5067,114 +5082,70 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
       /* "src/cache_manager/cache_manager.pyx":64
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:
  *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 data = self.redis_cluster.get(cache_key)
- *             else:
-*/
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_self->redis_cluster); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 64, __pyx_L4_error)
-      if (__pyx_t_4) {
-
-        /* "src/cache_manager/cache_manager.pyx":65
- *         try:
- *             if self.redis_cluster:
- *                 data = self.redis_cluster.get(cache_key)             # <<<<<<<<<<<<<<
- *             else:
- *                 data = await self.redis_client.get(cache_key)
-*/
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_cluster;
-        __Pyx_INCREF(__pyx_t_6);
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_cur_scope->__pyx_v_cache_key};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 65, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __Pyx_GIVEREF(__pyx_t_5);
-        __pyx_cur_scope->__pyx_v_data = __pyx_t_5;
-        __pyx_t_5 = 0;
-
-        /* "src/cache_manager/cache_manager.pyx":64
- *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:
- *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 data = self.redis_cluster.get(cache_key)
- *             else:
-*/
-        goto __pyx_L10;
-      }
-
-      /* "src/cache_manager/cache_manager.pyx":67
- *                 data = self.redis_cluster.get(cache_key)
- *             else:
- *                 data = await self.redis_client.get(cache_key)             # <<<<<<<<<<<<<<
+ *             data = await self.redis_client.get(cache_key)             # <<<<<<<<<<<<<<
  * 
  *             if data:
 */
-      /*else*/ {
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_client;
-        __Pyx_INCREF(__pyx_t_6);
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_cur_scope->__pyx_v_cache_key};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 67, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __pyx_t_8 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_5, &__pyx_r);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (likely(__pyx_t_8 == PYGEN_NEXT)) {
-          __Pyx_GOTREF(__pyx_r);
-          __Pyx_XGIVEREF(__pyx_t_1);
-          __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-          __Pyx_XGIVEREF(__pyx_t_2);
-          __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
-          __Pyx_XGIVEREF(__pyx_t_3);
-          __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
-          __Pyx_XGIVEREF(__pyx_r);
-          __Pyx_RefNannyFinishContext();
-          __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-          /* return from generator, awaiting value */
-          __pyx_generator->resume_label = 1;
-          return __pyx_r;
-          __pyx_L11_resume_from_await:;
-          __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-          __pyx_cur_scope->__pyx_t_0 = 0;
-          __Pyx_XGOTREF(__pyx_t_1);
-          __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-          __pyx_cur_scope->__pyx_t_1 = 0;
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-          __pyx_cur_scope->__pyx_t_2 = 0;
-          __Pyx_XGOTREF(__pyx_t_3);
-          if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 67, __pyx_L4_error)
-          __pyx_t_5 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_5);
-        } else if (likely(__pyx_t_8 == PYGEN_RETURN)) {
-          __Pyx_GOTREF(__pyx_r);
-          __pyx_t_5 = __pyx_r; __pyx_r = NULL;
-        } else {
-          __Pyx_XGOTREF(__pyx_r);
-          __PYX_ERR(0, 67, __pyx_L4_error)
-        }
-        __Pyx_GIVEREF(__pyx_t_5);
-        __pyx_cur_scope->__pyx_v_data = __pyx_t_5;
-        __pyx_t_5 = 0;
+      __pyx_t_5 = __pyx_cur_scope->__pyx_v_self->redis_client;
+      __Pyx_INCREF(__pyx_t_5);
+      __pyx_t_6 = 0;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_cur_scope->__pyx_v_cache_key};
+        __pyx_t_4 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_4);
       }
-      __pyx_L10:;
+      __pyx_t_7 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_4, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (likely(__pyx_t_7 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_t_1);
+        __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
+        __Pyx_XGIVEREF(__pyx_t_2);
+        __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+        __Pyx_XGIVEREF(__pyx_t_3);
+        __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 1;
+        return __pyx_r;
+        __pyx_L10_resume_from_await:;
+        __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
+        __pyx_cur_scope->__pyx_t_0 = 0;
+        __Pyx_XGOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
+        __pyx_cur_scope->__pyx_t_1 = 0;
+        __Pyx_XGOTREF(__pyx_t_2);
+        __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
+        __pyx_cur_scope->__pyx_t_2 = 0;
+        __Pyx_XGOTREF(__pyx_t_3);
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 64, __pyx_L4_error)
+        __pyx_t_4 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_4);
+      } else if (likely(__pyx_t_7 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __pyx_t_4 = __pyx_r; __pyx_r = NULL;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 64, __pyx_L4_error)
+      }
+      __Pyx_GIVEREF(__pyx_t_4);
+      __pyx_cur_scope->__pyx_v_data = __pyx_t_4;
+      __pyx_t_4 = 0;
 
-      /* "src/cache_manager/cache_manager.pyx":69
- *                 data = await self.redis_client.get(cache_key)
+      /* "src/cache_manager/cache_manager.pyx":66
+ *             data = await self.redis_client.get(cache_key)
  * 
  *             if data:             # <<<<<<<<<<<<<<
  *                 return pickle.loads(data)
  *             return None
 */
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_data); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 69, __pyx_L4_error)
-      if (__pyx_t_4) {
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_data); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 66, __pyx_L4_error)
+      if (__pyx_t_8) {
 
-        /* "src/cache_manager/cache_manager.pyx":70
+        /* "src/cache_manager/cache_manager.pyx":67
  * 
  *             if data:
  *                 return pickle.loads(data)             # <<<<<<<<<<<<<<
@@ -5182,39 +5153,39 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  *         except Exception as e:
 */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_6 = NULL;
-        __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_pickle); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 70, __pyx_L4_error)
+        __pyx_t_5 = NULL;
+        __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_pickle); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 67, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_loads); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 70, __pyx_L4_error)
+        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_loads); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 67, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_7 = 1;
+        __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
         if (unlikely(PyMethod_Check(__pyx_t_10))) {
-          __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_10);
-          assert(__pyx_t_6);
+          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_10);
+          assert(__pyx_t_5);
           PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
-          __Pyx_INCREF(__pyx_t_6);
+          __Pyx_INCREF(__pyx_t_5);
           __Pyx_INCREF(__pyx__function);
           __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
-          __pyx_t_7 = 0;
+          __pyx_t_6 = 0;
         }
         #endif
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_cur_scope->__pyx_v_data};
-          __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+          PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_cur_scope->__pyx_v_data};
+          __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 70, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_4);
         }
-        if (!(likely(PyDict_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_5))) __PYX_ERR(0, 70, __pyx_L4_error)
-        __pyx_r = ((PyObject*)__pyx_t_5);
-        __pyx_t_5 = 0;
+        if (!(likely(PyDict_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_4))) __PYX_ERR(0, 67, __pyx_L4_error)
+        __pyx_r = ((PyObject*)__pyx_t_4);
+        __pyx_t_4 = 0;
         goto __pyx_L8_try_return;
 
-        /* "src/cache_manager/cache_manager.pyx":69
- *                 data = await self.redis_client.get(cache_key)
+        /* "src/cache_manager/cache_manager.pyx":66
+ *             data = await self.redis_client.get(cache_key)
  * 
  *             if data:             # <<<<<<<<<<<<<<
  *                 return pickle.loads(data)
@@ -5222,7 +5193,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
 */
       }
 
-      /* "src/cache_manager/cache_manager.pyx":71
+      /* "src/cache_manager/cache_manager.pyx":68
  *             if data:
  *                 return pickle.loads(data)
  *             return None             # <<<<<<<<<<<<<<
@@ -5237,17 +5208,17 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 data = self.redis_cluster.get(cache_key)
+ *             data = await self.redis_client.get(cache_key)
+ * 
 */
     }
     __pyx_L4_error:;
     __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "src/cache_manager/cache_manager.pyx":72
+    /* "src/cache_manager/cache_manager.pyx":69
  *                 return pickle.loads(data)
  *             return None
  *         except Exception as e:             # <<<<<<<<<<<<<<
@@ -5257,16 +5228,16 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
     __pyx_t_11 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
     if (__pyx_t_11) {
       __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.get", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_10, &__pyx_t_6) < 0) __PYX_ERR(0, 72, __pyx_L6_except_error)
-      __Pyx_XGOTREF(__pyx_t_5);
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_10, &__pyx_t_5) < 0) __PYX_ERR(0, 69, __pyx_L6_except_error)
+      __Pyx_XGOTREF(__pyx_t_4);
       __Pyx_XGOTREF(__pyx_t_10);
-      __Pyx_XGOTREF(__pyx_t_6);
+      __Pyx_XGOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_10);
       __pyx_cur_scope->__pyx_v_e = __pyx_t_10;
       /*try:*/ {
 
-        /* "src/cache_manager/cache_manager.pyx":73
+        /* "src/cache_manager/cache_manager.pyx":70
  *             return None
  *         except Exception as e:
  *             print(f"Cache get error: {e}")             # <<<<<<<<<<<<<<
@@ -5276,24 +5247,24 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
         __pyx_t_12 = NULL;
         __Pyx_INCREF(__pyx_builtin_print);
         __pyx_t_13 = __pyx_builtin_print; 
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 73, __pyx_L18_error)
+        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 70, __pyx_L17_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_get_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 73, __pyx_L18_error)
+        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_get_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 70, __pyx_L17_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_7 = 1;
+        __pyx_t_6 = 1;
         {
           PyObject *__pyx_callargs[2] = {__pyx_t_12, __pyx_t_15};
-          __pyx_t_9 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __pyx_t_9 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 73, __pyx_L18_error)
+          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 70, __pyx_L17_error)
           __Pyx_GOTREF(__pyx_t_9);
         }
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":74
+        /* "src/cache_manager/cache_manager.pyx":71
  *         except Exception as e:
  *             print(f"Cache get error: {e}")
  *             return None             # <<<<<<<<<<<<<<
@@ -5302,13 +5273,13 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
 */
         __Pyx_XDECREF(__pyx_r);
         __pyx_r = ((PyObject*)Py_None); __Pyx_INCREF(Py_None);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        goto __pyx_L17_return;
+        goto __pyx_L16_return;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":72
+      /* "src/cache_manager/cache_manager.pyx":69
  *                 return pickle.loads(data)
  *             return None
  *         except Exception as e:             # <<<<<<<<<<<<<<
@@ -5316,7 +5287,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  *             return None
 */
       /*finally:*/ {
-        __pyx_L18_error:;
+        __pyx_L17_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_assign
           __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0;
@@ -5350,7 +5321,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
           __pyx_lineno = __pyx_t_11; __pyx_clineno = __pyx_t_16; __pyx_filename = __pyx_t_17;
           goto __pyx_L6_except_error;
         }
-        __pyx_L17_return: {
+        __pyx_L16_return: {
           __pyx_t_24 = __pyx_r;
           __pyx_r = 0;
           __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
@@ -5367,8 +5338,8 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 data = self.redis_cluster.get(cache_key)
+ *             data = await self.redis_client.get(cache_key)
+ * 
 */
     __pyx_L6_except_error:;
     __Pyx_XGIVEREF(__pyx_t_1);
@@ -5396,13 +5367,13 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             data = await self.redis_client.get(cache_key)
 */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_12);
@@ -5425,7 +5396,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_12
 }
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15generator3(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "src/cache_manager/cache_manager.pyx":77
+/* "src/cache_manager/cache_manager.pyx":74
  * 
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):             # <<<<<<<<<<<<<<
@@ -5475,40 +5446,40 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_cache_key,&__pyx_mstate_global->__pyx_n_u_response_data,&__pyx_mstate_global->__pyx_n_u_ttl,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 77, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 74, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 74, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 74, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 74, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set", 0) < 0) __PYX_ERR(0, 77, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set", 0) < 0) __PYX_ERR(0, 74, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set", 0, 2, 3, i); __PYX_ERR(0, 77, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set", 0, 2, 3, i); __PYX_ERR(0, 74, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 74, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 74, __pyx_L3_error)
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 77, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 74, __pyx_L3_error)
         break;
         default: goto __pyx_L5_argtuple_error;
       }
@@ -5516,14 +5487,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     __pyx_v_cache_key = ((PyObject*)values[0]);
     __pyx_v_response_data = ((PyObject*)values[1]);
     if (values[2]) {
-      __pyx_v_ttl = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_ttl == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L3_error)
+      __pyx_v_ttl = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_ttl == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L3_error)
     } else {
       __pyx_v_ttl = ((int)-1);
     }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set", 0, 2, 3, __pyx_nargs); __PYX_ERR(0, 77, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set", 0, 2, 3, __pyx_nargs); __PYX_ERR(0, 74, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5534,8 +5505,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cache_key), (&PyUnicode_Type), 1, "cache_key", 1))) __PYX_ERR(0, 77, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_response_data), (&PyDict_Type), 1, "response_data", 1))) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cache_key), (&PyUnicode_Type), 1, "cache_key", 1))) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_response_data), (&PyDict_Type), 1, "response_data", 1))) __PYX_ERR(0, 74, __pyx_L1_error)
   __pyx_r = __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_13set(((struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *)__pyx_v_self), __pyx_v_cache_key, __pyx_v_response_data, __pyx_v_ttl);
 
   /* function exit code */
@@ -5567,7 +5538,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_13
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 77, __pyx_L1_error)
+    __PYX_ERR(0, 74, __pyx_L1_error)
   } else {
     __Pyx_GOTREF((PyObject *)__pyx_cur_scope);
   }
@@ -5582,7 +5553,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_13
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_response_data);
   __pyx_cur_scope->__pyx_v_ttl = __pyx_v_ttl;
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15generator3, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_set, __pyx_mstate_global->__pyx_n_u_CacheManager_set, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15generator3, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_set, __pyx_mstate_global->__pyx_n_u_CacheManager_set, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 74, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -5632,7 +5603,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
   __Pyx_RefNannySetupContext("set", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L12_resume_from_await;
+    case 1: goto __pyx_L11_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -5640,10 +5611,10 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
   __pyx_L3_first_run:;
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) PyErr_SetString(PyExc_TypeError, "can't send non-None value to a just-started coroutine");
-    __PYX_ERR(0, 77, __pyx_L1_error)
+    __PYX_ERR(0, 74, __pyx_L1_error)
   }
 
-  /* "src/cache_manager/cache_manager.pyx":78
+  /* "src/cache_manager/cache_manager.pyx":75
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):
  *         try:             # <<<<<<<<<<<<<<
@@ -5657,7 +5628,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/cache_manager/cache_manager.pyx":79
+      /* "src/cache_manager/cache_manager.pyx":76
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):
  *         try:
  *             if ttl == -1:             # <<<<<<<<<<<<<<
@@ -5667,7 +5638,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
       __pyx_t_4 = (__pyx_cur_scope->__pyx_v_ttl == -1L);
       if (__pyx_t_4) {
 
-        /* "src/cache_manager/cache_manager.pyx":80
+        /* "src/cache_manager/cache_manager.pyx":77
  *         try:
  *             if ttl == -1:
  *                 ttl = self.default_ttl             # <<<<<<<<<<<<<<
@@ -5677,7 +5648,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
         __pyx_t_5 = __pyx_cur_scope->__pyx_v_self->default_ttl;
         __pyx_cur_scope->__pyx_v_ttl = __pyx_t_5;
 
-        /* "src/cache_manager/cache_manager.pyx":79
+        /* "src/cache_manager/cache_manager.pyx":76
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):
  *         try:
  *             if ttl == -1:             # <<<<<<<<<<<<<<
@@ -5686,17 +5657,17 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
 */
       }
 
-      /* "src/cache_manager/cache_manager.pyx":82
+      /* "src/cache_manager/cache_manager.pyx":79
  *                 ttl = self.default_ttl
  * 
  *             serialized = pickle.dumps(response_data)             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 self.redis_cluster.setex(cache_key, ttl, serialized)
+ *             await self.redis_client.setex(cache_key, ttl, serialized)
+ * 
 */
       __pyx_t_7 = NULL;
-      __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_pickle); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 82, __pyx_L4_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_pickle); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 79, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_dumps); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 82, __pyx_L4_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_dumps); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 79, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_10 = 1;
@@ -5716,115 +5687,70 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
         __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+__pyx_t_10, (2-__pyx_t_10) | (__pyx_t_10*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 82, __pyx_L4_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 79, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_6);
       }
       __Pyx_GIVEREF(__pyx_t_6);
       __pyx_cur_scope->__pyx_v_serialized = __pyx_t_6;
       __pyx_t_6 = 0;
 
-      /* "src/cache_manager/cache_manager.pyx":83
+      /* "src/cache_manager/cache_manager.pyx":80
  * 
  *             serialized = pickle.dumps(response_data)
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 self.redis_cluster.setex(cache_key, ttl, serialized)
- *             else:
-*/
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_self->redis_cluster); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 83, __pyx_L4_error)
-      if (__pyx_t_4) {
-
-        /* "src/cache_manager/cache_manager.pyx":84
- *             serialized = pickle.dumps(response_data)
- *             if self.redis_cluster:
- *                 self.redis_cluster.setex(cache_key, ttl, serialized)             # <<<<<<<<<<<<<<
- *             else:
- *                 await self.redis_client.setex(cache_key, ttl, serialized)
-*/
-        __pyx_t_9 = __pyx_cur_scope->__pyx_v_self->redis_cluster;
-        __Pyx_INCREF(__pyx_t_9);
-        __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_cur_scope->__pyx_v_ttl); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 84, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_10 = 0;
-        {
-          PyObject *__pyx_callargs[4] = {__pyx_t_9, __pyx_cur_scope->__pyx_v_cache_key, __pyx_t_7, __pyx_cur_scope->__pyx_v_serialized};
-          __pyx_t_6 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_setex, __pyx_callargs+__pyx_t_10, (4-__pyx_t_10) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 84, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_6);
-        }
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-
-        /* "src/cache_manager/cache_manager.pyx":83
- * 
- *             serialized = pickle.dumps(response_data)
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 self.redis_cluster.setex(cache_key, ttl, serialized)
- *             else:
-*/
-        goto __pyx_L11;
-      }
-
-      /* "src/cache_manager/cache_manager.pyx":86
- *                 self.redis_cluster.setex(cache_key, ttl, serialized)
- *             else:
- *                 await self.redis_client.setex(cache_key, ttl, serialized)             # <<<<<<<<<<<<<<
+ *             await self.redis_client.setex(cache_key, ttl, serialized)             # <<<<<<<<<<<<<<
  * 
  *             return True
 */
-      /*else*/ {
-        __pyx_t_7 = __pyx_cur_scope->__pyx_v_self->redis_client;
-        __Pyx_INCREF(__pyx_t_7);
-        __pyx_t_9 = __Pyx_PyLong_From_int(__pyx_cur_scope->__pyx_v_ttl); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 86, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_10 = 0;
-        {
-          PyObject *__pyx_callargs[4] = {__pyx_t_7, __pyx_cur_scope->__pyx_v_cache_key, __pyx_t_9, __pyx_cur_scope->__pyx_v_serialized};
-          __pyx_t_6 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_setex, __pyx_callargs+__pyx_t_10, (4-__pyx_t_10) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_6);
-        }
-        __pyx_t_11 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_6, &__pyx_r);
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (likely(__pyx_t_11 == PYGEN_NEXT)) {
-          __Pyx_GOTREF(__pyx_r);
-          __Pyx_XGIVEREF(__pyx_t_1);
-          __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-          __Pyx_XGIVEREF(__pyx_t_2);
-          __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
-          __Pyx_XGIVEREF(__pyx_t_3);
-          __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
-          __Pyx_XGIVEREF(__pyx_r);
-          __Pyx_RefNannyFinishContext();
-          __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-          /* return from generator, awaiting value */
-          __pyx_generator->resume_label = 1;
-          return __pyx_r;
-          __pyx_L12_resume_from_await:;
-          __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-          __pyx_cur_scope->__pyx_t_0 = 0;
-          __Pyx_XGOTREF(__pyx_t_1);
-          __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-          __pyx_cur_scope->__pyx_t_1 = 0;
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-          __pyx_cur_scope->__pyx_t_2 = 0;
-          __Pyx_XGOTREF(__pyx_t_3);
-          if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 86, __pyx_L4_error)
-        } else if (likely(__pyx_t_11 == PYGEN_RETURN)) {
-          __Pyx_GOTREF(__pyx_r);
-          __Pyx_DECREF(__pyx_r); __pyx_r = 0;
-        } else {
-          __Pyx_XGOTREF(__pyx_r);
-          __PYX_ERR(0, 86, __pyx_L4_error)
-        }
+      __pyx_t_9 = __pyx_cur_scope->__pyx_v_self->redis_client;
+      __Pyx_INCREF(__pyx_t_9);
+      __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_cur_scope->__pyx_v_ttl); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 80, __pyx_L4_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_10 = 0;
+      {
+        PyObject *__pyx_callargs[4] = {__pyx_t_9, __pyx_cur_scope->__pyx_v_cache_key, __pyx_t_7, __pyx_cur_scope->__pyx_v_serialized};
+        __pyx_t_6 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_setex, __pyx_callargs+__pyx_t_10, (4-__pyx_t_10) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 80, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_6);
       }
-      __pyx_L11:;
+      __pyx_t_11 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_6, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (likely(__pyx_t_11 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_t_1);
+        __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
+        __Pyx_XGIVEREF(__pyx_t_2);
+        __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+        __Pyx_XGIVEREF(__pyx_t_3);
+        __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 1;
+        return __pyx_r;
+        __pyx_L11_resume_from_await:;
+        __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
+        __pyx_cur_scope->__pyx_t_0 = 0;
+        __Pyx_XGOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
+        __pyx_cur_scope->__pyx_t_1 = 0;
+        __Pyx_XGOTREF(__pyx_t_2);
+        __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
+        __pyx_cur_scope->__pyx_t_2 = 0;
+        __Pyx_XGOTREF(__pyx_t_3);
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 80, __pyx_L4_error)
+      } else if (likely(__pyx_t_11 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_DECREF(__pyx_r); __pyx_r = 0;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 80, __pyx_L4_error)
+      }
 
-      /* "src/cache_manager/cache_manager.pyx":88
- *                 await self.redis_client.setex(cache_key, ttl, serialized)
+      /* "src/cache_manager/cache_manager.pyx":82
+ *             await self.redis_client.setex(cache_key, ttl, serialized)
  * 
  *             return True             # <<<<<<<<<<<<<<
  *         except Exception as e:
@@ -5835,7 +5761,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
       __pyx_r = Py_True;
       goto __pyx_L8_try_return;
 
-      /* "src/cache_manager/cache_manager.pyx":78
+      /* "src/cache_manager/cache_manager.pyx":75
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):
  *         try:             # <<<<<<<<<<<<<<
@@ -5849,7 +5775,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "src/cache_manager/cache_manager.pyx":89
+    /* "src/cache_manager/cache_manager.pyx":83
  * 
  *             return True
  *         except Exception as e:             # <<<<<<<<<<<<<<
@@ -5859,16 +5785,16 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
     __pyx_t_5 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
     if (__pyx_t_5) {
       __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.set", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_9, &__pyx_t_7) < 0) __PYX_ERR(0, 89, __pyx_L6_except_error)
+      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_7, &__pyx_t_9) < 0) __PYX_ERR(0, 83, __pyx_L6_except_error)
       __Pyx_XGOTREF(__pyx_t_6);
-      __Pyx_XGOTREF(__pyx_t_9);
       __Pyx_XGOTREF(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_9);
-      __Pyx_GIVEREF(__pyx_t_9);
-      __pyx_cur_scope->__pyx_v_e = __pyx_t_9;
+      __Pyx_XGOTREF(__pyx_t_9);
+      __Pyx_INCREF(__pyx_t_7);
+      __Pyx_GIVEREF(__pyx_t_7);
+      __pyx_cur_scope->__pyx_v_e = __pyx_t_7;
       /*try:*/ {
 
-        /* "src/cache_manager/cache_manager.pyx":90
+        /* "src/cache_manager/cache_manager.pyx":84
  *             return True
  *         except Exception as e:
  *             print(f"Cache set error: {e}")             # <<<<<<<<<<<<<<
@@ -5878,9 +5804,9 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
         __pyx_t_12 = NULL;
         __Pyx_INCREF(__pyx_builtin_print);
         __pyx_t_13 = __pyx_builtin_print; 
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 90, __pyx_L18_error)
+        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 84, __pyx_L17_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_set_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 90, __pyx_L18_error)
+        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_set_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 84, __pyx_L17_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __pyx_t_10 = 1;
@@ -5890,12 +5816,12 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
           __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 90, __pyx_L18_error)
+          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 84, __pyx_L17_error)
           __Pyx_GOTREF(__pyx_t_8);
         }
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":91
+        /* "src/cache_manager/cache_manager.pyx":85
  *         except Exception as e:
  *             print(f"Cache set error: {e}")
  *             return False             # <<<<<<<<<<<<<<
@@ -5908,10 +5834,10 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        goto __pyx_L17_return;
+        goto __pyx_L16_return;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":89
+      /* "src/cache_manager/cache_manager.pyx":83
  * 
  *             return True
  *         except Exception as e:             # <<<<<<<<<<<<<<
@@ -5919,7 +5845,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
  *             return False
 */
       /*finally:*/ {
-        __pyx_L18_error:;
+        __pyx_L17_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_assign
           __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0;
@@ -5953,7 +5879,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
           __pyx_lineno = __pyx_t_5; __pyx_clineno = __pyx_t_16; __pyx_filename = __pyx_t_17;
           goto __pyx_L6_except_error;
         }
-        __pyx_L17_return: {
+        __pyx_L16_return: {
           __pyx_t_23 = __pyx_r;
           __pyx_r = 0;
           __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
@@ -5966,7 +5892,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
     }
     goto __pyx_L6_except_error;
 
-    /* "src/cache_manager/cache_manager.pyx":78
+    /* "src/cache_manager/cache_manager.pyx":75
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):
  *         try:             # <<<<<<<<<<<<<<
@@ -5994,7 +5920,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "src/cache_manager/cache_manager.pyx":77
+  /* "src/cache_manager/cache_manager.pyx":74
  * 
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):             # <<<<<<<<<<<<<<
@@ -6028,12 +5954,12 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_15
 }
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18generator4(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "src/cache_manager/cache_manager.pyx":94
+/* "src/cache_manager/cache_manager.pyx":88
  * 
  * 
  *     async def delete(self, str cache_key) -> bool:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             return bool(await self.redis_client.delete(cache_key))
 */
 
 /* Python wrapper */
@@ -6076,32 +6002,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_cache_key,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 94, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 88, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 94, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 88, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "delete", 0) < 0) __PYX_ERR(0, 94, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "delete", 0) < 0) __PYX_ERR(0, 88, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("delete", 1, 1, 1, i); __PYX_ERR(0, 94, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("delete", 1, 1, 1, i); __PYX_ERR(0, 88, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 94, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 88, __pyx_L3_error)
     }
     __pyx_v_cache_key = ((PyObject*)values[0]);
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("delete", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 94, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("delete", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 88, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -6112,7 +6038,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cache_key), (&PyUnicode_Type), 1, "cache_key", 1))) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cache_key), (&PyUnicode_Type), 1, "cache_key", 1))) __PYX_ERR(0, 88, __pyx_L1_error)
   __pyx_r = __pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_16delete(((struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *)__pyx_v_self), __pyx_v_cache_key);
 
   /* function exit code */
@@ -6144,7 +6070,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_16
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 94, __pyx_L1_error)
+    __PYX_ERR(0, 88, __pyx_L1_error)
   } else {
     __Pyx_GOTREF((PyObject *)__pyx_cur_scope);
   }
@@ -6155,7 +6081,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_16
   __Pyx_INCREF(__pyx_cur_scope->__pyx_v_cache_key);
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_cache_key);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18generator4, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_delete, __pyx_mstate_global->__pyx_n_u_CacheManager_delete, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 94, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18generator4, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_delete, __pyx_mstate_global->__pyx_n_u_CacheManager_delete, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 88, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -6178,11 +6104,11 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  size_t __pyx_t_7;
-  __Pyx_PySendResult __pyx_t_8;
+  size_t __pyx_t_6;
+  __Pyx_PySendResult __pyx_t_7;
+  int __pyx_t_8;
   int __pyx_t_9;
   PyObject *__pyx_t_10 = NULL;
   PyObject *__pyx_t_11 = NULL;
@@ -6205,7 +6131,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
   __Pyx_RefNannySetupContext("delete", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L11_resume_from_await;
+    case 1: goto __pyx_L10_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -6213,15 +6139,15 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
   __pyx_L3_first_run:;
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) PyErr_SetString(PyExc_TypeError, "can't send non-None value to a just-started coroutine");
-    __PYX_ERR(0, 94, __pyx_L1_error)
+    __PYX_ERR(0, 88, __pyx_L1_error)
   }
 
-  /* "src/cache_manager/cache_manager.pyx":95
+  /* "src/cache_manager/cache_manager.pyx":89
  * 
  *     async def delete(self, str cache_key) -> bool:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 return bool(self.redis_cluster.delete(cache_key))
+ *             return bool(await self.redis_client.delete(cache_key))
+ *         except Exception as e:
 */
   {
     __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
@@ -6230,129 +6156,82 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/cache_manager/cache_manager.pyx":96
+      /* "src/cache_manager/cache_manager.pyx":90
  *     async def delete(self, str cache_key) -> bool:
  *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 return bool(self.redis_cluster.delete(cache_key))
- *             else:
-*/
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_self->redis_cluster); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 96, __pyx_L4_error)
-      if (__pyx_t_4) {
-
-        /* "src/cache_manager/cache_manager.pyx":97
- *         try:
- *             if self.redis_cluster:
- *                 return bool(self.redis_cluster.delete(cache_key))             # <<<<<<<<<<<<<<
- *             else:
- *                 return bool(await self.redis_client.delete(cache_key))
-*/
-        __Pyx_XDECREF(__pyx_r);
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_cluster;
-        __Pyx_INCREF(__pyx_t_6);
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_cur_scope->__pyx_v_cache_key};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_delete, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 97, __pyx_L4_error)
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = __Pyx_PyBool_FromLong((!(!__pyx_t_4))); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __pyx_r = __pyx_t_5;
-        __pyx_t_5 = 0;
-        goto __pyx_L8_try_return;
-
-        /* "src/cache_manager/cache_manager.pyx":96
- *     async def delete(self, str cache_key) -> bool:
- *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 return bool(self.redis_cluster.delete(cache_key))
- *             else:
-*/
-      }
-
-      /* "src/cache_manager/cache_manager.pyx":99
- *                 return bool(self.redis_cluster.delete(cache_key))
- *             else:
- *                 return bool(await self.redis_client.delete(cache_key))             # <<<<<<<<<<<<<<
+ *             return bool(await self.redis_client.delete(cache_key))             # <<<<<<<<<<<<<<
  *         except Exception as e:
  *             print(f"Cache delete error: {e}")
 */
-      /*else*/ {
-        __Pyx_XDECREF(__pyx_r);
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_client;
-        __Pyx_INCREF(__pyx_t_6);
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_cur_scope->__pyx_v_cache_key};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_delete, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __pyx_t_8 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_5, &__pyx_r);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (likely(__pyx_t_8 == PYGEN_NEXT)) {
-          __Pyx_GOTREF(__pyx_r);
-          __Pyx_XGIVEREF(__pyx_t_1);
-          __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-          __Pyx_XGIVEREF(__pyx_t_2);
-          __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
-          __Pyx_XGIVEREF(__pyx_t_3);
-          __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
-          __Pyx_XGIVEREF(__pyx_r);
-          __Pyx_RefNannyFinishContext();
-          __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-          /* return from generator, awaiting value */
-          __pyx_generator->resume_label = 1;
-          return __pyx_r;
-          __pyx_L11_resume_from_await:;
-          __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-          __pyx_cur_scope->__pyx_t_0 = 0;
-          __Pyx_XGOTREF(__pyx_t_1);
-          __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-          __pyx_cur_scope->__pyx_t_1 = 0;
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-          __pyx_cur_scope->__pyx_t_2 = 0;
-          __Pyx_XGOTREF(__pyx_t_3);
-          if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 99, __pyx_L4_error)
-          __pyx_t_5 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_5);
-        } else if (likely(__pyx_t_8 == PYGEN_RETURN)) {
-          __Pyx_GOTREF(__pyx_r);
-          __pyx_t_5 = __pyx_r; __pyx_r = NULL;
-        } else {
-          __Pyx_XGOTREF(__pyx_r);
-          __PYX_ERR(0, 99, __pyx_L4_error)
-        }
-        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 99, __pyx_L4_error)
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = __Pyx_PyBool_FromLong((!(!__pyx_t_4))); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __pyx_r = __pyx_t_5;
-        __pyx_t_5 = 0;
-        goto __pyx_L8_try_return;
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_5 = __pyx_cur_scope->__pyx_v_self->redis_client;
+      __Pyx_INCREF(__pyx_t_5);
+      __pyx_t_6 = 0;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_cur_scope->__pyx_v_cache_key};
+        __pyx_t_4 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_delete, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_4);
       }
+      __pyx_t_7 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_4, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (likely(__pyx_t_7 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_t_1);
+        __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
+        __Pyx_XGIVEREF(__pyx_t_2);
+        __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+        __Pyx_XGIVEREF(__pyx_t_3);
+        __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 1;
+        return __pyx_r;
+        __pyx_L10_resume_from_await:;
+        __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
+        __pyx_cur_scope->__pyx_t_0 = 0;
+        __Pyx_XGOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
+        __pyx_cur_scope->__pyx_t_1 = 0;
+        __Pyx_XGOTREF(__pyx_t_2);
+        __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
+        __pyx_cur_scope->__pyx_t_2 = 0;
+        __Pyx_XGOTREF(__pyx_t_3);
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 90, __pyx_L4_error)
+        __pyx_t_4 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_4);
+      } else if (likely(__pyx_t_7 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __pyx_t_4 = __pyx_r; __pyx_r = NULL;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 90, __pyx_L4_error)
+      }
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 90, __pyx_L4_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = __Pyx_PyBool_FromLong((!(!__pyx_t_8))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L4_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_r = __pyx_t_4;
+      __pyx_t_4 = 0;
+      goto __pyx_L8_try_return;
 
-      /* "src/cache_manager/cache_manager.pyx":95
+      /* "src/cache_manager/cache_manager.pyx":89
  * 
  *     async def delete(self, str cache_key) -> bool:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 return bool(self.redis_cluster.delete(cache_key))
+ *             return bool(await self.redis_client.delete(cache_key))
+ *         except Exception as e:
 */
     }
     __pyx_L4_error:;
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "src/cache_manager/cache_manager.pyx":100
- *             else:
- *                 return bool(await self.redis_client.delete(cache_key))
+    /* "src/cache_manager/cache_manager.pyx":91
+ *         try:
+ *             return bool(await self.redis_client.delete(cache_key))
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Cache delete error: {e}")
  *             return False
@@ -6360,17 +6239,17 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
     __pyx_t_9 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
     if (__pyx_t_9) {
       __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.delete", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_10) < 0) __PYX_ERR(0, 100, __pyx_L6_except_error)
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_10) < 0) __PYX_ERR(0, 91, __pyx_L6_except_error)
+      __Pyx_XGOTREF(__pyx_t_4);
       __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_XGOTREF(__pyx_t_6);
       __Pyx_XGOTREF(__pyx_t_10);
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_GIVEREF(__pyx_t_6);
-      __pyx_cur_scope->__pyx_v_e = __pyx_t_6;
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_5);
+      __pyx_cur_scope->__pyx_v_e = __pyx_t_5;
       /*try:*/ {
 
-        /* "src/cache_manager/cache_manager.pyx":101
- *                 return bool(await self.redis_client.delete(cache_key))
+        /* "src/cache_manager/cache_manager.pyx":92
+ *             return bool(await self.redis_client.delete(cache_key))
  *         except Exception as e:
  *             print(f"Cache delete error: {e}")             # <<<<<<<<<<<<<<
  *             return False
@@ -6379,24 +6258,24 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
         __pyx_t_12 = NULL;
         __Pyx_INCREF(__pyx_builtin_print);
         __pyx_t_13 = __pyx_builtin_print; 
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 101, __pyx_L17_error)
+        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 92, __pyx_L16_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_delete_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 101, __pyx_L17_error)
+        __pyx_t_15 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_delete_error, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 92, __pyx_L16_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_7 = 1;
+        __pyx_t_6 = 1;
         {
           PyObject *__pyx_callargs[2] = {__pyx_t_12, __pyx_t_15};
-          __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 101, __pyx_L17_error)
+          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 92, __pyx_L16_error)
           __Pyx_GOTREF(__pyx_t_11);
         }
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":102
+        /* "src/cache_manager/cache_manager.pyx":93
  *         except Exception as e:
  *             print(f"Cache delete error: {e}")
  *             return False             # <<<<<<<<<<<<<<
@@ -6406,21 +6285,21 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
         __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(Py_False);
         __pyx_r = Py_False;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        goto __pyx_L16_return;
+        goto __pyx_L15_return;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":100
- *             else:
- *                 return bool(await self.redis_client.delete(cache_key))
+      /* "src/cache_manager/cache_manager.pyx":91
+ *         try:
+ *             return bool(await self.redis_client.delete(cache_key))
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Cache delete error: {e}")
  *             return False
 */
       /*finally:*/ {
-        __pyx_L17_error:;
+        __pyx_L16_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_assign
           __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0;
@@ -6454,7 +6333,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
           __pyx_lineno = __pyx_t_9; __pyx_clineno = __pyx_t_16; __pyx_filename = __pyx_t_17;
           goto __pyx_L6_except_error;
         }
-        __pyx_L16_return: {
+        __pyx_L15_return: {
           __pyx_t_23 = __pyx_r;
           __pyx_r = 0;
           __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
@@ -6467,12 +6346,12 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
     }
     goto __pyx_L6_except_error;
 
-    /* "src/cache_manager/cache_manager.pyx":95
+    /* "src/cache_manager/cache_manager.pyx":89
  * 
  *     async def delete(self, str cache_key) -> bool:
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 return bool(self.redis_cluster.delete(cache_key))
+ *             return bool(await self.redis_client.delete(cache_key))
+ *         except Exception as e:
 */
     __pyx_L6_except_error:;
     __Pyx_XGIVEREF(__pyx_t_1);
@@ -6495,18 +6374,18 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "src/cache_manager/cache_manager.pyx":94
+  /* "src/cache_manager/cache_manager.pyx":88
  * 
  * 
  *     async def delete(self, str cache_key) -> bool:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             return bool(await self.redis_client.delete(cache_key))
 */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_12);
@@ -6529,7 +6408,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_18
 }
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21generator5(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "src/cache_manager/cache_manager.pyx":104
+/* "src/cache_manager/cache_manager.pyx":95
  *             return False
  * 
  *     async def clear_all(self) -> bool:             # <<<<<<<<<<<<<<
@@ -6592,7 +6471,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_19
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 104, __pyx_L1_error)
+    __PYX_ERR(0, 95, __pyx_L1_error)
   } else {
     __Pyx_GOTREF((PyObject *)__pyx_cur_scope);
   }
@@ -6600,7 +6479,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_19
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21generator5, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_clear_all, __pyx_mstate_global->__pyx_n_u_CacheManager_clear_all, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21generator5, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_clear_all, __pyx_mstate_global->__pyx_n_u_CacheManager_clear_all, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 95, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -6627,25 +6506,23 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
   size_t __pyx_t_7;
-  Py_ssize_t __pyx_t_8;
-  PyObject *(*__pyx_t_9)(PyObject *);
+  PyObject *__pyx_t_8 = NULL;
+  __Pyx_PySendResult __pyx_t_9;
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  __Pyx_PySendResult __pyx_t_12;
-  PyObject *(*__pyx_t_13)(PyObject *);
-  int __pyx_t_14;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  int __pyx_t_12;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
   PyObject *__pyx_t_15 = NULL;
   PyObject *__pyx_t_16 = NULL;
-  PyObject *__pyx_t_17 = NULL;
-  PyObject *__pyx_t_18 = NULL;
-  int __pyx_t_19;
-  char const *__pyx_t_20;
+  int __pyx_t_17;
+  char const *__pyx_t_18;
+  PyObject *__pyx_t_19 = NULL;
+  PyObject *__pyx_t_20 = NULL;
   PyObject *__pyx_t_21 = NULL;
   PyObject *__pyx_t_22 = NULL;
   PyObject *__pyx_t_23 = NULL;
   PyObject *__pyx_t_24 = NULL;
-  PyObject *__pyx_t_25 = NULL;
-  PyObject *__pyx_t_26 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -6653,8 +6530,8 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
   __Pyx_RefNannySetupContext("clear_all", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L17_resume_from_await;
-    case 2: goto __pyx_L21_resume_from_await;
+    case 1: goto __pyx_L12_resume_from_await;
+    case 2: goto __pyx_L16_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -6662,15 +6539,15 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
   __pyx_L3_first_run:;
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) PyErr_SetString(PyExc_TypeError, "can't send non-None value to a just-started coroutine");
-    __PYX_ERR(0, 104, __pyx_L1_error)
+    __PYX_ERR(0, 95, __pyx_L1_error)
   }
 
-  /* "src/cache_manager/cache_manager.pyx":106
+  /* "src/cache_manager/cache_manager.pyx":97
  *     async def clear_all(self) -> bool:
  *         """Clear all cache entries"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 # For cluster, we need to iterate through all nodes
+ *             cursor = b'0'
+ *             while cursor:
 */
   {
     __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
@@ -6679,229 +6556,189 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/cache_manager/cache_manager.pyx":107
+      /* "src/cache_manager/cache_manager.pyx":98
  *         """Clear all cache entries"""
  *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 # For cluster, we need to iterate through all nodes
- *                 for node in self.redis_cluster.get_nodes():
+ *             cursor = b'0'             # <<<<<<<<<<<<<<
+ *             while cursor:
+ *                 cursor, keys = await self.redis_client.scan(
 */
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_self->redis_cluster); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 107, __pyx_L4_error)
-      if (__pyx_t_4) {
+      __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b_0);
+      __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_b_0);
+      __pyx_cur_scope->__pyx_v_cursor = __pyx_mstate_global->__pyx_kp_b_0;
 
-        /* "src/cache_manager/cache_manager.pyx":109
- *             if self.redis_cluster:
- *                 # For cluster, we need to iterate through all nodes
- *                 for node in self.redis_cluster.get_nodes():             # <<<<<<<<<<<<<<
- *                     keys = node.redis_connection.keys("cache:*")
- *                     if keys:
+      /* "src/cache_manager/cache_manager.pyx":99
+ *         try:
+ *             cursor = b'0'
+ *             while cursor:             # <<<<<<<<<<<<<<
+ *                 cursor, keys = await self.redis_client.scan(
+ *                     cursor=cursor,
 */
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_cluster;
+      while (1) {
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_cursor); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 99, __pyx_L4_error)
+        if (!__pyx_t_4) break;
+
+        /* "src/cache_manager/cache_manager.pyx":100
+ *             cursor = b'0'
+ *             while cursor:
+ *                 cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
+ *                     cursor=cursor,
+ *                     match=b"cache:*",
+*/
+        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_client;
         __Pyx_INCREF(__pyx_t_6);
+
+        /* "src/cache_manager/cache_manager.pyx":101
+ *             while cursor:
+ *                 cursor, keys = await self.redis_client.scan(
+ *                     cursor=cursor,             # <<<<<<<<<<<<<<
+ *                     match=b"cache:*",
+ *                     count=100
+*/
         __pyx_t_7 = 0;
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, NULL};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get_nodes, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 3 : 0)] = {__pyx_t_6, NULL};
+          __pyx_t_8 = __Pyx_MakeVectorcallBuilderKwds(3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_cursor, __pyx_cur_scope->__pyx_v_cursor, __pyx_t_8, __pyx_callargs+1, 0) < 0) __PYX_ERR(0, 100, __pyx_L4_error)
+          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_match, __pyx_mstate_global->__pyx_kp_b_cache_2, __pyx_t_8, __pyx_callargs+1, 1) < 0) __PYX_ERR(0, 100, __pyx_L4_error)
+          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_count, __pyx_mstate_global->__pyx_int_100, __pyx_t_8, __pyx_callargs+1, 2) < 0) __PYX_ERR(0, 100, __pyx_L4_error)
+          __pyx_t_5 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_scan, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_8);
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L4_error)
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L4_error)
           __Pyx_GOTREF(__pyx_t_5);
         }
-        if (likely(PyList_CheckExact(__pyx_t_5)) || PyTuple_CheckExact(__pyx_t_5)) {
-          __pyx_t_6 = __pyx_t_5; __Pyx_INCREF(__pyx_t_6);
-          __pyx_t_8 = 0;
-          __pyx_t_9 = NULL;
-        } else {
-          __pyx_t_8 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 109, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 109, __pyx_L4_error)
-        }
+        __pyx_t_9 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_5, &__pyx_r);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        for (;;) {
-          if (likely(!__pyx_t_9)) {
-            if (likely(PyList_CheckExact(__pyx_t_6))) {
-              {
-                Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_6);
-                #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 109, __pyx_L4_error)
-                #endif
-                if (__pyx_t_8 >= __pyx_temp) break;
-              }
-              __pyx_t_5 = __Pyx_PyList_GetItemRef(__pyx_t_6, __pyx_t_8);
-              ++__pyx_t_8;
-            } else {
-              {
-                Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
-                #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 109, __pyx_L4_error)
-                #endif
-                if (__pyx_t_8 >= __pyx_temp) break;
-              }
-              #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_5 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_8));
-              #else
-              __pyx_t_5 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_8);
-              #endif
-              ++__pyx_t_8;
-            }
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L4_error)
-          } else {
-            __pyx_t_5 = __pyx_t_9(__pyx_t_6);
-            if (unlikely(!__pyx_t_5)) {
-              PyObject* exc_type = PyErr_Occurred();
-              if (exc_type) {
-                if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 109, __pyx_L4_error)
-                PyErr_Clear();
-              }
-              break;
-            }
-          }
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_node);
-          __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_node, __pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_5);
-          __pyx_t_5 = 0;
-
-          /* "src/cache_manager/cache_manager.pyx":110
- *                 # For cluster, we need to iterate through all nodes
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")             # <<<<<<<<<<<<<<
- *                     if keys:
- *                         node.redis_connection.delete(*keys)
-*/
-          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_node, __pyx_mstate_global->__pyx_n_u_redis_connection); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 110, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __pyx_t_10 = __pyx_t_11;
-          __Pyx_INCREF(__pyx_t_10);
-          __pyx_t_7 = 0;
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_mstate_global->__pyx_kp_u_cache_2};
-            __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_keys, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 110, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-          }
-          __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_keys);
-          __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_keys, __pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_5);
-          __pyx_t_5 = 0;
-
-          /* "src/cache_manager/cache_manager.pyx":111
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")
- *                     if keys:             # <<<<<<<<<<<<<<
- *                         node.redis_connection.delete(*keys)
- *             else:
-*/
-          __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_keys); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 111, __pyx_L4_error)
-          if (__pyx_t_4) {
-
-            /* "src/cache_manager/cache_manager.pyx":112
- *                     keys = node.redis_connection.keys("cache:*")
- *                     if keys:
- *                         node.redis_connection.delete(*keys)             # <<<<<<<<<<<<<<
- *             else:
- *                 cursor = b'0'
-*/
-            __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_node, __pyx_mstate_global->__pyx_n_u_redis_connection); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_mstate_global->__pyx_n_u_delete); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 112, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_11);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __pyx_t_5 = __Pyx_PySequence_Tuple(__pyx_cur_scope->__pyx_v_keys); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_5, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 112, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_10);
-            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-            /* "src/cache_manager/cache_manager.pyx":111
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")
- *                     if keys:             # <<<<<<<<<<<<<<
- *                         node.redis_connection.delete(*keys)
- *             else:
-*/
-          }
-
-          /* "src/cache_manager/cache_manager.pyx":109
- *             if self.redis_cluster:
- *                 # For cluster, we need to iterate through all nodes
- *                 for node in self.redis_cluster.get_nodes():             # <<<<<<<<<<<<<<
- *                     keys = node.redis_connection.keys("cache:*")
- *                     if keys:
-*/
+        if (likely(__pyx_t_9 == PYGEN_NEXT)) {
+          __Pyx_GOTREF(__pyx_r);
+          __Pyx_XGIVEREF(__pyx_t_1);
+          __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
+          __Pyx_XGIVEREF(__pyx_t_2);
+          __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+          __Pyx_XGIVEREF(__pyx_t_3);
+          __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
+          __Pyx_XGIVEREF(__pyx_r);
+          __Pyx_RefNannyFinishContext();
+          __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+          /* return from generator, awaiting value */
+          __pyx_generator->resume_label = 1;
+          return __pyx_r;
+          __pyx_L12_resume_from_await:;
+          __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
+          __pyx_cur_scope->__pyx_t_0 = 0;
+          __Pyx_XGOTREF(__pyx_t_1);
+          __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
+          __pyx_cur_scope->__pyx_t_1 = 0;
+          __Pyx_XGOTREF(__pyx_t_2);
+          __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
+          __pyx_cur_scope->__pyx_t_2 = 0;
+          __Pyx_XGOTREF(__pyx_t_3);
+          if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 100, __pyx_L4_error)
+          __pyx_t_5 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_5);
+        } else if (likely(__pyx_t_9 == PYGEN_RETURN)) {
+          __Pyx_GOTREF(__pyx_r);
+          __pyx_t_5 = __pyx_r; __pyx_r = NULL;
+        } else {
+          __Pyx_XGOTREF(__pyx_r);
+          __PYX_ERR(0, 100, __pyx_L4_error)
         }
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-
-        /* "src/cache_manager/cache_manager.pyx":107
- *         """Clear all cache entries"""
- *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 # For cluster, we need to iterate through all nodes
- *                 for node in self.redis_cluster.get_nodes():
-*/
-        goto __pyx_L10;
-      }
-
-      /* "src/cache_manager/cache_manager.pyx":114
- *                         node.redis_connection.delete(*keys)
- *             else:
- *                 cursor = b'0'             # <<<<<<<<<<<<<<
- *                 while cursor:
- *                     cursor, keys = await self.redis_client.scan(
-*/
-      /*else*/ {
-        __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b_0);
-        __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_b_0);
-        __pyx_cur_scope->__pyx_v_cursor = __pyx_mstate_global->__pyx_kp_b_0;
-
-        /* "src/cache_manager/cache_manager.pyx":115
- *             else:
- *                 cursor = b'0'
- *                 while cursor:             # <<<<<<<<<<<<<<
- *                     cursor, keys = await self.redis_client.scan(
- *                         cursor=cursor,
-*/
-        while (1) {
-          __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_cursor); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 115, __pyx_L4_error)
-          if (!__pyx_t_4) break;
-
-          /* "src/cache_manager/cache_manager.pyx":116
- *                 cursor = b'0'
- *                 while cursor:
- *                     cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
- *                         cursor=cursor,
- *                         match=b"cache:*",
-*/
-          __pyx_t_10 = __pyx_cur_scope->__pyx_v_self->redis_client;
-          __Pyx_INCREF(__pyx_t_10);
-
-          /* "src/cache_manager/cache_manager.pyx":117
- *                 while cursor:
- *                     cursor, keys = await self.redis_client.scan(
- *                         cursor=cursor,             # <<<<<<<<<<<<<<
- *                         match=b"cache:*",
- *                         count=100
-*/
-          __pyx_t_7 = 0;
-          {
-            PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 3 : 0)] = {__pyx_t_10, NULL};
-            __pyx_t_5 = __Pyx_MakeVectorcallBuilderKwds(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_cursor, __pyx_cur_scope->__pyx_v_cursor, __pyx_t_5, __pyx_callargs+1, 0) < 0) __PYX_ERR(0, 116, __pyx_L4_error)
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_match, __pyx_mstate_global->__pyx_kp_b_cache_2, __pyx_t_5, __pyx_callargs+1, 1) < 0) __PYX_ERR(0, 116, __pyx_L4_error)
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_count, __pyx_mstate_global->__pyx_int_100, __pyx_t_5, __pyx_callargs+1, 2) < 0) __PYX_ERR(0, 116, __pyx_L4_error)
-            __pyx_t_6 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_scan, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_5);
-            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_6);
+        if ((likely(PyTuple_CheckExact(__pyx_t_5))) || (PyList_CheckExact(__pyx_t_5))) {
+          PyObject* sequence = __pyx_t_5;
+          Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+          if (unlikely(size != 2)) {
+            if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+            else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+            __PYX_ERR(0, 100, __pyx_L4_error)
           }
-          __pyx_t_12 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_6, &__pyx_r);
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          if (likely(PyTuple_CheckExact(sequence))) {
+            __pyx_t_8 = PyTuple_GET_ITEM(sequence, 0);
+            __Pyx_INCREF(__pyx_t_8);
+            __pyx_t_6 = PyTuple_GET_ITEM(sequence, 1);
+            __Pyx_INCREF(__pyx_t_6);
+          } else {
+            __pyx_t_8 = __Pyx_PyList_GetItemRef(sequence, 0);
+            if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L4_error)
+            __Pyx_XGOTREF(__pyx_t_8);
+            __pyx_t_6 = __Pyx_PyList_GetItemRef(sequence, 1);
+            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 100, __pyx_L4_error)
+            __Pyx_XGOTREF(__pyx_t_6);
+          }
+          #else
+          __pyx_t_8 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_6 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 100, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          #endif
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        } else {
+          Py_ssize_t index = -1;
+          __pyx_t_10 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 100, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __pyx_t_11 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_10);
+          index = 0; __pyx_t_8 = __pyx_t_11(__pyx_t_10); if (unlikely(!__pyx_t_8)) goto __pyx_L13_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_8);
+          index = 1; __pyx_t_6 = __pyx_t_11(__pyx_t_10); if (unlikely(!__pyx_t_6)) goto __pyx_L13_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_6);
+          if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 2) < 0) __PYX_ERR(0, 100, __pyx_L4_error)
+          __pyx_t_11 = NULL;
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          goto __pyx_L14_unpacking_done;
+          __pyx_L13_unpacking_failed:;
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_11 = NULL;
+          if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+          __PYX_ERR(0, 100, __pyx_L4_error)
+          __pyx_L14_unpacking_done:;
+        }
+
+        /* "src/cache_manager/cache_manager.pyx":100
+ *             cursor = b'0'
+ *             while cursor:
+ *                 cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
+ *                     cursor=cursor,
+ *                     match=b"cache:*",
+*/
+        __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_cursor);
+        __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_cursor, __pyx_t_8);
+        __Pyx_GIVEREF(__pyx_t_8);
+        __pyx_t_8 = 0;
+        __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_keys);
+        __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_keys, __pyx_t_6);
+        __Pyx_GIVEREF(__pyx_t_6);
+        __pyx_t_6 = 0;
+
+        /* "src/cache_manager/cache_manager.pyx":105
+ *                     count=100
+ *                 )
+ *                 if keys:             # <<<<<<<<<<<<<<
+ *                     await self.redis_client.delete(*keys)
+ *                 if cursor == b'0':
+*/
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_keys); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 105, __pyx_L4_error)
+        if (__pyx_t_4) {
+
+          /* "src/cache_manager/cache_manager.pyx":106
+ *                 )
+ *                 if keys:
+ *                     await self.redis_client.delete(*keys)             # <<<<<<<<<<<<<<
+ *                 if cursor == b'0':
+ *                     break
+*/
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_self->redis_client, __pyx_mstate_global->__pyx_n_u_delete); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_6 = __Pyx_PySequence_Tuple(__pyx_cur_scope->__pyx_v_keys); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 106, __pyx_L4_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (likely(__pyx_t_12 == PYGEN_NEXT)) {
+          __pyx_t_9 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_8, &__pyx_r);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          if (likely(__pyx_t_9 == PYGEN_NEXT)) {
             __Pyx_GOTREF(__pyx_r);
             __Pyx_XGIVEREF(__pyx_t_1);
             __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
@@ -6913,9 +6750,9 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
             __Pyx_RefNannyFinishContext();
             __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
             /* return from generator, awaiting value */
-            __pyx_generator->resume_label = 1;
+            __pyx_generator->resume_label = 2;
             return __pyx_r;
-            __pyx_L17_resume_from_await:;
+            __pyx_L16_resume_from_await:;
             __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
             __pyx_cur_scope->__pyx_t_0 = 0;
             __Pyx_XGOTREF(__pyx_t_1);
@@ -6925,186 +6762,57 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
             __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
             __pyx_cur_scope->__pyx_t_2 = 0;
             __Pyx_XGOTREF(__pyx_t_3);
-            if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __pyx_t_6 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_6);
-          } else if (likely(__pyx_t_12 == PYGEN_RETURN)) {
+            if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 106, __pyx_L4_error)
+          } else if (likely(__pyx_t_9 == PYGEN_RETURN)) {
             __Pyx_GOTREF(__pyx_r);
-            __pyx_t_6 = __pyx_r; __pyx_r = NULL;
+            __Pyx_DECREF(__pyx_r); __pyx_r = 0;
           } else {
             __Pyx_XGOTREF(__pyx_r);
-            __PYX_ERR(0, 116, __pyx_L4_error)
-          }
-          if ((likely(PyTuple_CheckExact(__pyx_t_6))) || (PyList_CheckExact(__pyx_t_6))) {
-            PyObject* sequence = __pyx_t_6;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 2)) {
-              if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 116, __pyx_L4_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0);
-              __Pyx_INCREF(__pyx_t_5);
-              __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1);
-              __Pyx_INCREF(__pyx_t_10);
-            } else {
-              __pyx_t_5 = __Pyx_PyList_GetItemRef(sequence, 0);
-              if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 116, __pyx_L4_error)
-              __Pyx_XGOTREF(__pyx_t_5);
-              __pyx_t_10 = __Pyx_PyList_GetItemRef(sequence, 1);
-              if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 116, __pyx_L4_error)
-              __Pyx_XGOTREF(__pyx_t_10);
-            }
-            #else
-            __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_10 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_10);
-            #endif
-            __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          } else {
-            Py_ssize_t index = -1;
-            __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 116, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_11);
-            __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-            __pyx_t_13 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_11);
-            index = 0; __pyx_t_5 = __pyx_t_13(__pyx_t_11); if (unlikely(!__pyx_t_5)) goto __pyx_L18_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_5);
-            index = 1; __pyx_t_10 = __pyx_t_13(__pyx_t_11); if (unlikely(!__pyx_t_10)) goto __pyx_L18_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_10);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_13(__pyx_t_11), 2) < 0) __PYX_ERR(0, 116, __pyx_L4_error)
-            __pyx_t_13 = NULL;
-            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            goto __pyx_L19_unpacking_done;
-            __pyx_L18_unpacking_failed:;
-            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            __pyx_t_13 = NULL;
-            if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 116, __pyx_L4_error)
-            __pyx_L19_unpacking_done:;
+            __PYX_ERR(0, 106, __pyx_L4_error)
           }
 
-          /* "src/cache_manager/cache_manager.pyx":116
- *                 cursor = b'0'
- *                 while cursor:
- *                     cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
- *                         cursor=cursor,
- *                         match=b"cache:*",
+          /* "src/cache_manager/cache_manager.pyx":105
+ *                     count=100
+ *                 )
+ *                 if keys:             # <<<<<<<<<<<<<<
+ *                     await self.redis_client.delete(*keys)
+ *                 if cursor == b'0':
 */
-          __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_cursor);
-          __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_cursor, __pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_5);
-          __pyx_t_5 = 0;
-          __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_keys);
-          __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_keys, __pyx_t_10);
-          __Pyx_GIVEREF(__pyx_t_10);
-          __pyx_t_10 = 0;
+        }
 
-          /* "src/cache_manager/cache_manager.pyx":121
- *                         count=100
- *                     )
- *                     if keys:             # <<<<<<<<<<<<<<
- *                         await self.redis_client.delete(*keys)
- *                     if cursor == b'0':
-*/
-          __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_keys); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 121, __pyx_L4_error)
-          if (__pyx_t_4) {
-
-            /* "src/cache_manager/cache_manager.pyx":122
- *                     )
- *                     if keys:
- *                         await self.redis_client.delete(*keys)             # <<<<<<<<<<<<<<
- *                     if cursor == b'0':
- *                         break
-*/
-            __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_self->redis_client, __pyx_mstate_global->__pyx_n_u_delete); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 122, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_6);
-            __pyx_t_10 = __Pyx_PySequence_Tuple(__pyx_cur_scope->__pyx_v_keys); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 122, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 122, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __pyx_t_12 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_5, &__pyx_r);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            if (likely(__pyx_t_12 == PYGEN_NEXT)) {
-              __Pyx_GOTREF(__pyx_r);
-              __Pyx_XGIVEREF(__pyx_t_1);
-              __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-              __Pyx_XGIVEREF(__pyx_t_2);
-              __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
-              __Pyx_XGIVEREF(__pyx_t_3);
-              __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
-              __Pyx_XGIVEREF(__pyx_r);
-              __Pyx_RefNannyFinishContext();
-              __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-              /* return from generator, awaiting value */
-              __pyx_generator->resume_label = 2;
-              return __pyx_r;
-              __pyx_L21_resume_from_await:;
-              __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-              __pyx_cur_scope->__pyx_t_0 = 0;
-              __Pyx_XGOTREF(__pyx_t_1);
-              __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-              __pyx_cur_scope->__pyx_t_1 = 0;
-              __Pyx_XGOTREF(__pyx_t_2);
-              __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-              __pyx_cur_scope->__pyx_t_2 = 0;
-              __Pyx_XGOTREF(__pyx_t_3);
-              if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 122, __pyx_L4_error)
-            } else if (likely(__pyx_t_12 == PYGEN_RETURN)) {
-              __Pyx_GOTREF(__pyx_r);
-              __Pyx_DECREF(__pyx_r); __pyx_r = 0;
-            } else {
-              __Pyx_XGOTREF(__pyx_r);
-              __PYX_ERR(0, 122, __pyx_L4_error)
-            }
-
-            /* "src/cache_manager/cache_manager.pyx":121
- *                         count=100
- *                     )
- *                     if keys:             # <<<<<<<<<<<<<<
- *                         await self.redis_client.delete(*keys)
- *                     if cursor == b'0':
-*/
-          }
-
-          /* "src/cache_manager/cache_manager.pyx":123
- *                     if keys:
- *                         await self.redis_client.delete(*keys)
- *                     if cursor == b'0':             # <<<<<<<<<<<<<<
- *                         break
+        /* "src/cache_manager/cache_manager.pyx":107
+ *                 if keys:
+ *                     await self.redis_client.delete(*keys)
+ *                 if cursor == b'0':             # <<<<<<<<<<<<<<
+ *                     break
  *             return True
 */
-          __pyx_t_4 = (__Pyx_PyBytes_Equals(__pyx_cur_scope->__pyx_v_cursor, __pyx_mstate_global->__pyx_kp_b_0, Py_EQ)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 123, __pyx_L4_error)
-          if (__pyx_t_4) {
+        __pyx_t_4 = (__Pyx_PyBytes_Equals(__pyx_cur_scope->__pyx_v_cursor, __pyx_mstate_global->__pyx_kp_b_0, Py_EQ)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 107, __pyx_L4_error)
+        if (__pyx_t_4) {
 
-            /* "src/cache_manager/cache_manager.pyx":124
- *                         await self.redis_client.delete(*keys)
- *                     if cursor == b'0':
- *                         break             # <<<<<<<<<<<<<<
+          /* "src/cache_manager/cache_manager.pyx":108
+ *                     await self.redis_client.delete(*keys)
+ *                 if cursor == b'0':
+ *                     break             # <<<<<<<<<<<<<<
  *             return True
  *         except Exception as e:
 */
-            goto __pyx_L16_break;
+          goto __pyx_L11_break;
 
-            /* "src/cache_manager/cache_manager.pyx":123
- *                     if keys:
- *                         await self.redis_client.delete(*keys)
- *                     if cursor == b'0':             # <<<<<<<<<<<<<<
- *                         break
+          /* "src/cache_manager/cache_manager.pyx":107
+ *                 if keys:
+ *                     await self.redis_client.delete(*keys)
+ *                 if cursor == b'0':             # <<<<<<<<<<<<<<
+ *                     break
  *             return True
 */
-          }
         }
-        __pyx_L16_break:;
       }
-      __pyx_L10:;
+      __pyx_L11_break:;
 
-      /* "src/cache_manager/cache_manager.pyx":125
- *                     if cursor == b'0':
- *                         break
+      /* "src/cache_manager/cache_manager.pyx":109
+ *                 if cursor == b'0':
+ *                     break
  *             return True             # <<<<<<<<<<<<<<
  *         except Exception as e:
  *             print(f"Cache clear error: {e}")
@@ -7114,67 +6822,67 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
       __pyx_r = Py_True;
       goto __pyx_L8_try_return;
 
-      /* "src/cache_manager/cache_manager.pyx":106
+      /* "src/cache_manager/cache_manager.pyx":97
  *     async def clear_all(self) -> bool:
  *         """Clear all cache entries"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 # For cluster, we need to iterate through all nodes
+ *             cursor = b'0'
+ *             while cursor:
 */
     }
     __pyx_L4_error:;
     __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "src/cache_manager/cache_manager.pyx":126
- *                         break
+    /* "src/cache_manager/cache_manager.pyx":110
+ *                     break
  *             return True
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Cache clear error: {e}")
  *             return False
 */
-    __pyx_t_14 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
-    if (__pyx_t_14) {
+    __pyx_t_12 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+    if (__pyx_t_12) {
       __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.clear_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_10, &__pyx_t_6) < 0) __PYX_ERR(0, 126, __pyx_L6_except_error)
-      __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_XGOTREF(__pyx_t_10);
+      if (__Pyx_GetException(&__pyx_t_8, &__pyx_t_6, &__pyx_t_5) < 0) __PYX_ERR(0, 110, __pyx_L6_except_error)
+      __Pyx_XGOTREF(__pyx_t_8);
       __Pyx_XGOTREF(__pyx_t_6);
-      __Pyx_INCREF(__pyx_t_10);
-      __Pyx_GIVEREF(__pyx_t_10);
-      __pyx_cur_scope->__pyx_v_e = __pyx_t_10;
+      __Pyx_XGOTREF(__pyx_t_5);
+      __Pyx_INCREF(__pyx_t_6);
+      __Pyx_GIVEREF(__pyx_t_6);
+      __pyx_cur_scope->__pyx_v_e = __pyx_t_6;
       /*try:*/ {
 
-        /* "src/cache_manager/cache_manager.pyx":127
+        /* "src/cache_manager/cache_manager.pyx":111
  *             return True
  *         except Exception as e:
  *             print(f"Cache clear error: {e}")             # <<<<<<<<<<<<<<
  *             return False
  * 
 */
-        __pyx_t_15 = NULL;
+        __pyx_t_13 = NULL;
         __Pyx_INCREF(__pyx_builtin_print);
-        __pyx_t_16 = __pyx_builtin_print; 
-        __pyx_t_17 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 127, __pyx_L28_error)
-        __Pyx_GOTREF(__pyx_t_17);
-        __pyx_t_18 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_clear_error, __pyx_t_17); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 127, __pyx_L28_error)
-        __Pyx_GOTREF(__pyx_t_18);
-        __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+        __pyx_t_14 = __pyx_builtin_print; 
+        __pyx_t_15 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 111, __pyx_L23_error)
+        __Pyx_GOTREF(__pyx_t_15);
+        __pyx_t_16 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Cache_clear_error, __pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 111, __pyx_L23_error)
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         __pyx_t_7 = 1;
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_15, __pyx_t_18};
-          __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_16, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
+          PyObject *__pyx_callargs[2] = {__pyx_t_13, __pyx_t_16};
+          __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
           __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 127, __pyx_L28_error)
-          __Pyx_GOTREF(__pyx_t_11);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 111, __pyx_L23_error)
+          __Pyx_GOTREF(__pyx_t_10);
         }
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":128
+        /* "src/cache_manager/cache_manager.pyx":112
  *         except Exception as e:
  *             print(f"Cache clear error: {e}")
  *             return False             # <<<<<<<<<<<<<<
@@ -7186,71 +6894,71 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
         __pyx_r = Py_False;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        goto __pyx_L27_return;
+        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L22_return;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":126
- *                         break
+      /* "src/cache_manager/cache_manager.pyx":110
+ *                     break
  *             return True
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Cache clear error: {e}")
  *             return False
 */
       /*finally:*/ {
-        __pyx_L28_error:;
+        __pyx_L23_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_assign
-          __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0; __pyx_t_25 = 0; __pyx_t_26 = 0;
-          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
           __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
-           __Pyx_ExceptionSwap(&__pyx_t_24, &__pyx_t_25, &__pyx_t_26);
-          if ( unlikely(__Pyx_GetException(&__pyx_t_21, &__pyx_t_22, &__pyx_t_23) < 0)) __Pyx_ErrFetch(&__pyx_t_21, &__pyx_t_22, &__pyx_t_23);
+           __Pyx_ExceptionSwap(&__pyx_t_22, &__pyx_t_23, &__pyx_t_24);
+          if ( unlikely(__Pyx_GetException(&__pyx_t_19, &__pyx_t_20, &__pyx_t_21) < 0)) __Pyx_ErrFetch(&__pyx_t_19, &__pyx_t_20, &__pyx_t_21);
+          __Pyx_XGOTREF(__pyx_t_19);
+          __Pyx_XGOTREF(__pyx_t_20);
           __Pyx_XGOTREF(__pyx_t_21);
           __Pyx_XGOTREF(__pyx_t_22);
           __Pyx_XGOTREF(__pyx_t_23);
           __Pyx_XGOTREF(__pyx_t_24);
-          __Pyx_XGOTREF(__pyx_t_25);
-          __Pyx_XGOTREF(__pyx_t_26);
-          __pyx_t_14 = __pyx_lineno; __pyx_t_19 = __pyx_clineno; __pyx_t_20 = __pyx_filename;
+          __pyx_t_12 = __pyx_lineno; __pyx_t_17 = __pyx_clineno; __pyx_t_18 = __pyx_filename;
           {
             __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
             __Pyx_DECREF(__pyx_cur_scope->__pyx_v_e); __pyx_cur_scope->__pyx_v_e = 0;
           }
-          __Pyx_XGIVEREF(__pyx_t_24);
-          __Pyx_XGIVEREF(__pyx_t_25);
-          __Pyx_XGIVEREF(__pyx_t_26);
-          __Pyx_ExceptionReset(__pyx_t_24, __pyx_t_25, __pyx_t_26);
-          __Pyx_XGIVEREF(__pyx_t_21);
           __Pyx_XGIVEREF(__pyx_t_22);
           __Pyx_XGIVEREF(__pyx_t_23);
-          __Pyx_ErrRestore(__pyx_t_21, __pyx_t_22, __pyx_t_23);
-          __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0; __pyx_t_25 = 0; __pyx_t_26 = 0;
-          __pyx_lineno = __pyx_t_14; __pyx_clineno = __pyx_t_19; __pyx_filename = __pyx_t_20;
+          __Pyx_XGIVEREF(__pyx_t_24);
+          __Pyx_ExceptionReset(__pyx_t_22, __pyx_t_23, __pyx_t_24);
+          __Pyx_XGIVEREF(__pyx_t_19);
+          __Pyx_XGIVEREF(__pyx_t_20);
+          __Pyx_XGIVEREF(__pyx_t_21);
+          __Pyx_ErrRestore(__pyx_t_19, __pyx_t_20, __pyx_t_21);
+          __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0;
+          __pyx_lineno = __pyx_t_12; __pyx_clineno = __pyx_t_17; __pyx_filename = __pyx_t_18;
           goto __pyx_L6_except_error;
         }
-        __pyx_L27_return: {
-          __pyx_t_26 = __pyx_r;
+        __pyx_L22_return: {
+          __pyx_t_24 = __pyx_r;
           __pyx_r = 0;
           __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
           __Pyx_DECREF(__pyx_cur_scope->__pyx_v_e); __pyx_cur_scope->__pyx_v_e = 0;
-          __pyx_r = __pyx_t_26;
-          __pyx_t_26 = 0;
+          __pyx_r = __pyx_t_24;
+          __pyx_t_24 = 0;
           goto __pyx_L7_except_return;
         }
       }
     }
     goto __pyx_L6_except_error;
 
-    /* "src/cache_manager/cache_manager.pyx":106
+    /* "src/cache_manager/cache_manager.pyx":97
  *     async def clear_all(self) -> bool:
  *         """Clear all cache entries"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 # For cluster, we need to iterate through all nodes
+ *             cursor = b'0'
+ *             while cursor:
 */
     __pyx_L6_except_error:;
     __Pyx_XGIVEREF(__pyx_t_1);
@@ -7273,7 +6981,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "src/cache_manager/cache_manager.pyx":104
+  /* "src/cache_manager/cache_manager.pyx":95
  *             return False
  * 
  *     async def clear_all(self) -> bool:             # <<<<<<<<<<<<<<
@@ -7285,12 +6993,12 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_XDECREF(__pyx_t_14);
   __Pyx_XDECREF(__pyx_t_15);
   __Pyx_XDECREF(__pyx_t_16);
-  __Pyx_XDECREF(__pyx_t_17);
-  __Pyx_XDECREF(__pyx_t_18);
   if (__Pyx_PyErr_Occurred()) {
     __Pyx_Generator_Replace_StopIteration(0);
     __Pyx_AddTraceback("clear_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -7307,7 +7015,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_21
 }
 static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24generator6(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "src/cache_manager/cache_manager.pyx":130
+/* "src/cache_manager/cache_manager.pyx":114
  *             return False
  * 
  *     async def get_stats(self) -> Dict[str, int]:             # <<<<<<<<<<<<<<
@@ -7370,7 +7078,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_22
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 130, __pyx_L1_error)
+    __PYX_ERR(0, 114, __pyx_L1_error)
   } else {
     __Pyx_GOTREF((PyObject *)__pyx_cur_scope);
   }
@@ -7378,7 +7086,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_22
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24generator6, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_get_stats, __pyx_mstate_global->__pyx_n_u_CacheManager_get_stats, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24generator6, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6]), (PyObject *) __pyx_cur_scope, __pyx_mstate_global->__pyx_n_u_get_stats, __pyx_mstate_global->__pyx_n_u_CacheManager_get_stats, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager); if (unlikely(!gen)) __PYX_ERR(0, 114, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -7401,31 +7109,28 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  size_t __pyx_t_7;
-  Py_ssize_t __pyx_t_8;
-  PyObject *(*__pyx_t_9)(PyObject *);
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  Py_ssize_t __pyx_t_12;
-  __Pyx_PySendResult __pyx_t_13;
-  PyObject *(*__pyx_t_14)(PyObject *);
-  int __pyx_t_15;
+  size_t __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  __Pyx_PySendResult __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *(*__pyx_t_10)(PyObject *);
+  Py_ssize_t __pyx_t_11;
+  int __pyx_t_12;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
   PyObject *__pyx_t_16 = NULL;
-  PyObject *__pyx_t_17 = NULL;
-  PyObject *__pyx_t_18 = NULL;
+  int __pyx_t_17;
+  char const *__pyx_t_18;
   PyObject *__pyx_t_19 = NULL;
-  int __pyx_t_20;
-  char const *__pyx_t_21;
+  PyObject *__pyx_t_20 = NULL;
+  PyObject *__pyx_t_21 = NULL;
   PyObject *__pyx_t_22 = NULL;
   PyObject *__pyx_t_23 = NULL;
   PyObject *__pyx_t_24 = NULL;
   PyObject *__pyx_t_25 = NULL;
-  PyObject *__pyx_t_26 = NULL;
-  PyObject *__pyx_t_27 = NULL;
-  PyObject *__pyx_t_28 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -7433,7 +7138,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
   __Pyx_RefNannySetupContext("get_stats", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
-    case 1: goto __pyx_L14_resume_from_await;
+    case 1: goto __pyx_L10_resume_from_await;
     default: /* CPython raises the right error here */
     __Pyx_RefNannyFinishContext();
     return NULL;
@@ -7441,15 +7146,15 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
   __pyx_L3_first_run:;
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) PyErr_SetString(PyExc_TypeError, "can't send non-None value to a just-started coroutine");
-    __PYX_ERR(0, 130, __pyx_L1_error)
+    __PYX_ERR(0, 114, __pyx_L1_error)
   }
 
-  /* "src/cache_manager/cache_manager.pyx":132
+  /* "src/cache_manager/cache_manager.pyx":116
  *     async def get_stats(self) -> Dict[str, int]:
  *         """Get cache statistics"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 total_keys = 0
+ *             cursor = b'0'
+ *             total_keys = 0
 */
   {
     __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
@@ -7458,537 +7163,347 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/cache_manager/cache_manager.pyx":133
+      /* "src/cache_manager/cache_manager.pyx":117
  *         """Get cache statistics"""
  *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 total_keys = 0
- *                 for node in self.redis_cluster.get_nodes():
+ *             cursor = b'0'             # <<<<<<<<<<<<<<
+ *             total_keys = 0
+ *             cursor, keys = await self.redis_client.scan(
 */
-      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_v_self->redis_cluster); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 133, __pyx_L4_error)
-      if (__pyx_t_4) {
+      __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b_0);
+      __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_b_0);
+      __pyx_cur_scope->__pyx_v_cursor = __pyx_mstate_global->__pyx_kp_b_0;
 
-        /* "src/cache_manager/cache_manager.pyx":134
+      /* "src/cache_manager/cache_manager.pyx":118
  *         try:
- *             if self.redis_cluster:
- *                 total_keys = 0             # <<<<<<<<<<<<<<
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")
+ *             cursor = b'0'
+ *             total_keys = 0             # <<<<<<<<<<<<<<
+ *             cursor, keys = await self.redis_client.scan(
+ *                 cursor=cursor,
 */
-        __Pyx_INCREF(__pyx_mstate_global->__pyx_int_0);
-        __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_0);
-        __pyx_cur_scope->__pyx_v_total_keys = __pyx_mstate_global->__pyx_int_0;
+      __pyx_cur_scope->__pyx_v_total_keys = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":135
- *             if self.redis_cluster:
- *                 total_keys = 0
- *                 for node in self.redis_cluster.get_nodes():             # <<<<<<<<<<<<<<
- *                     keys = node.redis_connection.keys("cache:*")
- *                     total_keys += len(keys)
+      /* "src/cache_manager/cache_manager.pyx":119
+ *             cursor = b'0'
+ *             total_keys = 0
+ *             cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
+ *                 cursor=cursor,
+ *                 match=b"cache:*",
 */
-        __pyx_t_6 = __pyx_cur_scope->__pyx_v_self->redis_cluster;
-        __Pyx_INCREF(__pyx_t_6);
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, NULL};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get_nodes, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 135, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_5 = __pyx_cur_scope->__pyx_v_self->redis_client;
+      __Pyx_INCREF(__pyx_t_5);
+
+      /* "src/cache_manager/cache_manager.pyx":120
+ *             total_keys = 0
+ *             cursor, keys = await self.redis_client.scan(
+ *                 cursor=cursor,             # <<<<<<<<<<<<<<
+ *                 match=b"cache:*",
+ *                 count=1000
+*/
+      __pyx_t_6 = 0;
+      {
+        PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 3 : 0)] = {__pyx_t_5, NULL};
+        __pyx_t_7 = __Pyx_MakeVectorcallBuilderKwds(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_cursor, __pyx_cur_scope->__pyx_v_cursor, __pyx_t_7, __pyx_callargs+1, 0) < 0) __PYX_ERR(0, 119, __pyx_L4_error)
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_match, __pyx_mstate_global->__pyx_kp_b_cache_2, __pyx_t_7, __pyx_callargs+1, 1) < 0) __PYX_ERR(0, 119, __pyx_L4_error)
+        if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_count, __pyx_mstate_global->__pyx_int_1000, __pyx_t_7, __pyx_callargs+1, 2) < 0) __PYX_ERR(0, 119, __pyx_L4_error)
+        __pyx_t_4 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_scan, __pyx_callargs+__pyx_t_6, (1-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_7);
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_4);
+      }
+      __pyx_t_8 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_4, &__pyx_r);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (likely(__pyx_t_8 == PYGEN_NEXT)) {
+        __Pyx_GOTREF(__pyx_r);
+        __Pyx_XGIVEREF(__pyx_t_1);
+        __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
+        __Pyx_XGIVEREF(__pyx_t_2);
+        __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+        __Pyx_XGIVEREF(__pyx_t_3);
+        __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
+        __Pyx_XGIVEREF(__pyx_r);
+        __Pyx_RefNannyFinishContext();
+        __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
+        /* return from generator, awaiting value */
+        __pyx_generator->resume_label = 1;
+        return __pyx_r;
+        __pyx_L10_resume_from_await:;
+        __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
+        __pyx_cur_scope->__pyx_t_0 = 0;
+        __Pyx_XGOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
+        __pyx_cur_scope->__pyx_t_1 = 0;
+        __Pyx_XGOTREF(__pyx_t_2);
+        __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
+        __pyx_cur_scope->__pyx_t_2 = 0;
+        __Pyx_XGOTREF(__pyx_t_3);
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __pyx_t_4 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_4);
+      } else if (likely(__pyx_t_8 == PYGEN_RETURN)) {
+        __Pyx_GOTREF(__pyx_r);
+        __pyx_t_4 = __pyx_r; __pyx_r = NULL;
+      } else {
+        __Pyx_XGOTREF(__pyx_r);
+        __PYX_ERR(0, 119, __pyx_L4_error)
+      }
+      if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
+        PyObject* sequence = __pyx_t_4;
+        Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+        if (unlikely(size != 2)) {
+          if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+          else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+          __PYX_ERR(0, 119, __pyx_L4_error)
         }
-        if (likely(PyList_CheckExact(__pyx_t_5)) || PyTuple_CheckExact(__pyx_t_5)) {
-          __pyx_t_6 = __pyx_t_5; __Pyx_INCREF(__pyx_t_6);
-          __pyx_t_8 = 0;
-          __pyx_t_9 = NULL;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        if (likely(PyTuple_CheckExact(sequence))) {
+          __pyx_t_7 = PyTuple_GET_ITEM(sequence, 0);
+          __Pyx_INCREF(__pyx_t_7);
+          __pyx_t_5 = PyTuple_GET_ITEM(sequence, 1);
+          __Pyx_INCREF(__pyx_t_5);
         } else {
-          __pyx_t_8 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 135, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 135, __pyx_L4_error)
+          __pyx_t_7 = __Pyx_PyList_GetItemRef(sequence, 0);
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L4_error)
+          __Pyx_XGOTREF(__pyx_t_7);
+          __pyx_t_5 = __Pyx_PyList_GetItemRef(sequence, 1);
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 119, __pyx_L4_error)
+          __Pyx_XGOTREF(__pyx_t_5);
         }
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        for (;;) {
-          if (likely(!__pyx_t_9)) {
-            if (likely(PyList_CheckExact(__pyx_t_6))) {
-              {
-                Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_6);
-                #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L4_error)
-                #endif
-                if (__pyx_t_8 >= __pyx_temp) break;
-              }
-              __pyx_t_5 = __Pyx_PyList_GetItemRef(__pyx_t_6, __pyx_t_8);
-              ++__pyx_t_8;
-            } else {
-              {
-                Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
-                #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L4_error)
-                #endif
-                if (__pyx_t_8 >= __pyx_temp) break;
-              }
-              #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_5 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_8));
-              #else
-              __pyx_t_5 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_8);
-              #endif
-              ++__pyx_t_8;
-            }
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 135, __pyx_L4_error)
-          } else {
-            __pyx_t_5 = __pyx_t_9(__pyx_t_6);
-            if (unlikely(!__pyx_t_5)) {
-              PyObject* exc_type = PyErr_Occurred();
-              if (exc_type) {
-                if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 135, __pyx_L4_error)
-                PyErr_Clear();
-              }
-              break;
-            }
-          }
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_node);
-          __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_node, __pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_5);
-          __pyx_t_5 = 0;
-
-          /* "src/cache_manager/cache_manager.pyx":136
- *                 total_keys = 0
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")             # <<<<<<<<<<<<<<
- *                     total_keys += len(keys)
- *                 return {
-*/
-          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_node, __pyx_mstate_global->__pyx_n_u_redis_connection); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 136, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __pyx_t_10 = __pyx_t_11;
-          __Pyx_INCREF(__pyx_t_10);
-          __pyx_t_7 = 0;
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_mstate_global->__pyx_kp_u_cache_2};
-            __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_keys, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L4_error)
-            __Pyx_GOTREF(__pyx_t_5);
-          }
-          __Pyx_XGOTREF(__pyx_cur_scope->__pyx_v_keys);
-          __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_keys, __pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_5);
-          __pyx_t_5 = 0;
-
-          /* "src/cache_manager/cache_manager.pyx":137
- *                 for node in self.redis_cluster.get_nodes():
- *                     keys = node.redis_connection.keys("cache:*")
- *                     total_keys += len(keys)             # <<<<<<<<<<<<<<
- *                 return {
- *                     "total_keys": total_keys,
-*/
-          __pyx_t_12 = PyObject_Length(__pyx_cur_scope->__pyx_v_keys); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 137, __pyx_L4_error)
-          __pyx_t_5 = PyLong_FromSsize_t(__pyx_t_12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_cur_scope->__pyx_v_total_keys, __pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 137, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_total_keys);
-          __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_total_keys, __pyx_t_11);
-          __Pyx_GIVEREF(__pyx_t_11);
-          __pyx_t_11 = 0;
-
-          /* "src/cache_manager/cache_manager.pyx":135
- *             if self.redis_cluster:
- *                 total_keys = 0
- *                 for node in self.redis_cluster.get_nodes():             # <<<<<<<<<<<<<<
- *                     keys = node.redis_connection.keys("cache:*")
- *                     total_keys += len(keys)
-*/
-        }
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-
-        /* "src/cache_manager/cache_manager.pyx":138
- *                     keys = node.redis_connection.keys("cache:*")
- *                     total_keys += len(keys)
- *                 return {             # <<<<<<<<<<<<<<
- *                     "total_keys": total_keys,
- *                     "cluster_mode": True
-*/
-        __Pyx_XDECREF(__pyx_r);
-
-        /* "src/cache_manager/cache_manager.pyx":139
- *                     total_keys += len(keys)
- *                 return {
- *                     "total_keys": total_keys,             # <<<<<<<<<<<<<<
- *                     "cluster_mode": True
- *                 }
-*/
-        __pyx_t_6 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 139, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_6);
-        if (PyDict_SetItem(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_total_keys, __pyx_cur_scope->__pyx_v_total_keys) < 0) __PYX_ERR(0, 139, __pyx_L4_error)
-
-        /* "src/cache_manager/cache_manager.pyx":140
- *                 return {
- *                     "total_keys": total_keys,
- *                     "cluster_mode": True             # <<<<<<<<<<<<<<
- *                 }
- *             else:
-*/
-        if (PyDict_SetItem(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_cluster_mode, Py_True) < 0) __PYX_ERR(0, 139, __pyx_L4_error)
-        __pyx_r = ((PyObject*)__pyx_t_6);
-        __pyx_t_6 = 0;
-        goto __pyx_L8_try_return;
-
-        /* "src/cache_manager/cache_manager.pyx":133
- *         """Get cache statistics"""
- *         try:
- *             if self.redis_cluster:             # <<<<<<<<<<<<<<
- *                 total_keys = 0
- *                 for node in self.redis_cluster.get_nodes():
-*/
+        #else
+        __pyx_t_7 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        #endif
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      } else {
+        Py_ssize_t index = -1;
+        __pyx_t_9 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 119, __pyx_L4_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_t_10 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_9);
+        index = 0; __pyx_t_7 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_7)) goto __pyx_L11_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_7);
+        index = 1; __pyx_t_5 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_5)) goto __pyx_L11_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_5);
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 2) < 0) __PYX_ERR(0, 119, __pyx_L4_error)
+        __pyx_t_10 = NULL;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        goto __pyx_L12_unpacking_done;
+        __pyx_L11_unpacking_failed:;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_10 = NULL;
+        if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+        __PYX_ERR(0, 119, __pyx_L4_error)
+        __pyx_L12_unpacking_done:;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":143
- *                 }
- *             else:
- *                 cursor = b'0'             # <<<<<<<<<<<<<<
- *                 total_keys = 0
- *                 cursor, keys = await self.redis_client.scan(
+      /* "src/cache_manager/cache_manager.pyx":119
+ *             cursor = b'0'
+ *             total_keys = 0
+ *             cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
+ *                 cursor=cursor,
+ *                 match=b"cache:*",
 */
-      /*else*/ {
-        __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b_0);
-        __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_b_0);
-        __pyx_cur_scope->__pyx_v_cursor = __pyx_mstate_global->__pyx_kp_b_0;
+      __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_cursor);
+      __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_cursor, __pyx_t_7);
+      __Pyx_GIVEREF(__pyx_t_7);
+      __pyx_t_7 = 0;
+      __Pyx_GIVEREF(__pyx_t_5);
+      __pyx_cur_scope->__pyx_v_keys = __pyx_t_5;
+      __pyx_t_5 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":144
- *             else:
- *                 cursor = b'0'
- *                 total_keys = 0             # <<<<<<<<<<<<<<
- *                 cursor, keys = await self.redis_client.scan(
- *                     cursor=cursor,
-*/
-        __Pyx_INCREF(__pyx_mstate_global->__pyx_int_0);
-        __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_0);
-        __pyx_cur_scope->__pyx_v_total_keys = __pyx_mstate_global->__pyx_int_0;
-
-        /* "src/cache_manager/cache_manager.pyx":145
- *                 cursor = b'0'
- *                 total_keys = 0
- *                 cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
- *                     cursor=cursor,
- *                     match=b"cache:*",
-*/
-        __pyx_t_11 = __pyx_cur_scope->__pyx_v_self->redis_client;
-        __Pyx_INCREF(__pyx_t_11);
-
-        /* "src/cache_manager/cache_manager.pyx":146
- *                 total_keys = 0
- *                 cursor, keys = await self.redis_client.scan(
- *                     cursor=cursor,             # <<<<<<<<<<<<<<
- *                     match=b"cache:*",
- *                     count=1000
-*/
-        __pyx_t_7 = 0;
-        {
-          PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 3 : 0)] = {__pyx_t_11, NULL};
-          __pyx_t_5 = __Pyx_MakeVectorcallBuilderKwds(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_cursor, __pyx_cur_scope->__pyx_v_cursor, __pyx_t_5, __pyx_callargs+1, 0) < 0) __PYX_ERR(0, 145, __pyx_L4_error)
-          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_match, __pyx_mstate_global->__pyx_kp_b_cache_2, __pyx_t_5, __pyx_callargs+1, 1) < 0) __PYX_ERR(0, 145, __pyx_L4_error)
-          if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_count, __pyx_mstate_global->__pyx_int_1000, __pyx_t_5, __pyx_callargs+1, 2) < 0) __PYX_ERR(0, 145, __pyx_L4_error)
-          __pyx_t_6 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_scan, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_5);
-          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_6);
-        }
-        __pyx_t_13 = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_6, &__pyx_r);
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (likely(__pyx_t_13 == PYGEN_NEXT)) {
-          __Pyx_GOTREF(__pyx_r);
-          __Pyx_XGIVEREF(__pyx_t_1);
-          __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-          __Pyx_XGIVEREF(__pyx_t_2);
-          __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
-          __Pyx_XGIVEREF(__pyx_t_3);
-          __pyx_cur_scope->__pyx_t_2 = __pyx_t_3;
-          __Pyx_XGIVEREF(__pyx_r);
-          __Pyx_RefNannyFinishContext();
-          __Pyx_Coroutine_ResetAndClearException(__pyx_generator);
-          /* return from generator, awaiting value */
-          __pyx_generator->resume_label = 1;
-          return __pyx_r;
-          __pyx_L14_resume_from_await:;
-          __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-          __pyx_cur_scope->__pyx_t_0 = 0;
-          __Pyx_XGOTREF(__pyx_t_1);
-          __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-          __pyx_cur_scope->__pyx_t_1 = 0;
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-          __pyx_cur_scope->__pyx_t_2 = 0;
-          __Pyx_XGOTREF(__pyx_t_3);
-          if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __pyx_t_6 = __pyx_sent_value; __Pyx_INCREF(__pyx_t_6);
-        } else if (likely(__pyx_t_13 == PYGEN_RETURN)) {
-          __Pyx_GOTREF(__pyx_r);
-          __pyx_t_6 = __pyx_r; __pyx_r = NULL;
-        } else {
-          __Pyx_XGOTREF(__pyx_r);
-          __PYX_ERR(0, 145, __pyx_L4_error)
-        }
-        if ((likely(PyTuple_CheckExact(__pyx_t_6))) || (PyList_CheckExact(__pyx_t_6))) {
-          PyObject* sequence = __pyx_t_6;
-          Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-          if (unlikely(size != 2)) {
-            if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-            else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-            __PYX_ERR(0, 145, __pyx_L4_error)
-          }
-          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          if (likely(PyTuple_CheckExact(sequence))) {
-            __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0);
-            __Pyx_INCREF(__pyx_t_5);
-            __pyx_t_11 = PyTuple_GET_ITEM(sequence, 1);
-            __Pyx_INCREF(__pyx_t_11);
-          } else {
-            __pyx_t_5 = __Pyx_PyList_GetItemRef(sequence, 0);
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 145, __pyx_L4_error)
-            __Pyx_XGOTREF(__pyx_t_5);
-            __pyx_t_11 = __Pyx_PyList_GetItemRef(sequence, 1);
-            if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 145, __pyx_L4_error)
-            __Pyx_XGOTREF(__pyx_t_11);
-          }
-          #else
-          __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_11 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          #endif
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        } else {
-          Py_ssize_t index = -1;
-          __pyx_t_10 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 145, __pyx_L4_error)
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __pyx_t_14 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_10);
-          index = 0; __pyx_t_5 = __pyx_t_14(__pyx_t_10); if (unlikely(!__pyx_t_5)) goto __pyx_L15_unpacking_failed;
-          __Pyx_GOTREF(__pyx_t_5);
-          index = 1; __pyx_t_11 = __pyx_t_14(__pyx_t_10); if (unlikely(!__pyx_t_11)) goto __pyx_L15_unpacking_failed;
-          __Pyx_GOTREF(__pyx_t_11);
-          if (__Pyx_IternextUnpackEndCheck(__pyx_t_14(__pyx_t_10), 2) < 0) __PYX_ERR(0, 145, __pyx_L4_error)
-          __pyx_t_14 = NULL;
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          goto __pyx_L16_unpacking_done;
-          __pyx_L15_unpacking_failed:;
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_14 = NULL;
-          if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-          __PYX_ERR(0, 145, __pyx_L4_error)
-          __pyx_L16_unpacking_done:;
-        }
-
-        /* "src/cache_manager/cache_manager.pyx":145
- *                 cursor = b'0'
- *                 total_keys = 0
- *                 cursor, keys = await self.redis_client.scan(             # <<<<<<<<<<<<<<
- *                     cursor=cursor,
- *                     match=b"cache:*",
-*/
-        __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_cursor);
-        __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_cursor, __pyx_t_5);
-        __Pyx_GIVEREF(__pyx_t_5);
-        __pyx_t_5 = 0;
-        __Pyx_GIVEREF(__pyx_t_11);
-        __pyx_cur_scope->__pyx_v_keys = __pyx_t_11;
-        __pyx_t_11 = 0;
-
-        /* "src/cache_manager/cache_manager.pyx":150
- *                     count=1000
- *                 )
- *                 total_keys = len(keys)             # <<<<<<<<<<<<<<
+      /* "src/cache_manager/cache_manager.pyx":124
+ *                 count=1000
+ *             )
+ *             total_keys = len(keys)             # <<<<<<<<<<<<<<
  * 
- *                 return {
+ *             return {
 */
-        __pyx_t_8 = PyObject_Length(__pyx_cur_scope->__pyx_v_keys); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 150, __pyx_L4_error)
-        __pyx_t_6 = PyLong_FromSsize_t(__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 150, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_6);
-        __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_total_keys);
-        __Pyx_DECREF_SET(__pyx_cur_scope->__pyx_v_total_keys, __pyx_t_6);
-        __Pyx_GIVEREF(__pyx_t_6);
-        __pyx_t_6 = 0;
+      __pyx_t_11 = PyObject_Length(__pyx_cur_scope->__pyx_v_keys); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 124, __pyx_L4_error)
+      __pyx_cur_scope->__pyx_v_total_keys = __pyx_t_11;
 
-        /* "src/cache_manager/cache_manager.pyx":152
- *                 total_keys = len(keys)
+      /* "src/cache_manager/cache_manager.pyx":126
+ *             total_keys = len(keys)
  * 
- *                 return {             # <<<<<<<<<<<<<<
- *                     "total_keys": total_keys,
- *                     "cluster_mode": False
+ *             return {             # <<<<<<<<<<<<<<
+ *                 "total_keys": total_keys,
+ *                 "cluster_mode": self.use_cluster
 */
-        __Pyx_XDECREF(__pyx_r);
+      __Pyx_XDECREF(__pyx_r);
 
-        /* "src/cache_manager/cache_manager.pyx":153
+      /* "src/cache_manager/cache_manager.pyx":127
  * 
- *                 return {
- *                     "total_keys": total_keys,             # <<<<<<<<<<<<<<
- *                     "cluster_mode": False
- *                 }
+ *             return {
+ *                 "total_keys": total_keys,             # <<<<<<<<<<<<<<
+ *                 "cluster_mode": self.use_cluster
+ *             }
 */
-        __pyx_t_6 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 153, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_6);
-        if (PyDict_SetItem(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_total_keys, __pyx_cur_scope->__pyx_v_total_keys) < 0) __PYX_ERR(0, 153, __pyx_L4_error)
+      __pyx_t_4 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 127, __pyx_L4_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = PyLong_FromSsize_t(__pyx_cur_scope->__pyx_v_total_keys); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 127, __pyx_L4_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      if (PyDict_SetItem(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_total_keys, __pyx_t_5) < 0) __PYX_ERR(0, 127, __pyx_L4_error)
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":154
- *                 return {
- *                     "total_keys": total_keys,
- *                     "cluster_mode": False             # <<<<<<<<<<<<<<
- *                 }
+      /* "src/cache_manager/cache_manager.pyx":128
+ *             return {
+ *                 "total_keys": total_keys,
+ *                 "cluster_mode": self.use_cluster             # <<<<<<<<<<<<<<
+ *             }
  *         except Exception as e:
 */
-        if (PyDict_SetItem(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_cluster_mode, Py_False) < 0) __PYX_ERR(0, 153, __pyx_L4_error)
-        __pyx_r = ((PyObject*)__pyx_t_6);
-        __pyx_t_6 = 0;
-        goto __pyx_L8_try_return;
-      }
+      __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_cur_scope->__pyx_v_self->use_cluster); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 128, __pyx_L4_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      if (PyDict_SetItem(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_cluster_mode, __pyx_t_5) < 0) __PYX_ERR(0, 127, __pyx_L4_error)
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_r = ((PyObject*)__pyx_t_4);
+      __pyx_t_4 = 0;
+      goto __pyx_L8_try_return;
 
-      /* "src/cache_manager/cache_manager.pyx":132
+      /* "src/cache_manager/cache_manager.pyx":116
  *     async def get_stats(self) -> Dict[str, int]:
  *         """Get cache statistics"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 total_keys = 0
+ *             cursor = b'0'
+ *             total_keys = 0
 */
     }
     __pyx_L4_error:;
-    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "src/cache_manager/cache_manager.pyx":156
- *                     "cluster_mode": False
- *                 }
+    /* "src/cache_manager/cache_manager.pyx":130
+ *                 "cluster_mode": self.use_cluster
+ *             }
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Stats error: {e}")
  *             return {"total_keys": 0, "error": str(e)}
 */
-    __pyx_t_15 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
-    if (__pyx_t_15) {
+    __pyx_t_12 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+    if (__pyx_t_12) {
       __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.get_stats", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_11, &__pyx_t_5) < 0) __PYX_ERR(0, 156, __pyx_L6_except_error)
-      __Pyx_XGOTREF(__pyx_t_6);
-      __Pyx_XGOTREF(__pyx_t_11);
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_7) < 0) __PYX_ERR(0, 130, __pyx_L6_except_error)
+      __Pyx_XGOTREF(__pyx_t_4);
       __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_GIVEREF(__pyx_t_11);
-      __pyx_cur_scope->__pyx_v_e = __pyx_t_11;
+      __Pyx_XGOTREF(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_5);
+      __pyx_cur_scope->__pyx_v_e = __pyx_t_5;
       /*try:*/ {
 
-        /* "src/cache_manager/cache_manager.pyx":157
- *                 }
+        /* "src/cache_manager/cache_manager.pyx":131
+ *             }
  *         except Exception as e:
  *             print(f"Stats error: {e}")             # <<<<<<<<<<<<<<
  *             return {"total_keys": 0, "error": str(e)}
 */
-        __pyx_t_16 = NULL;
+        __pyx_t_13 = NULL;
         __Pyx_INCREF(__pyx_builtin_print);
-        __pyx_t_17 = __pyx_builtin_print; 
-        __pyx_t_18 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 157, __pyx_L22_error)
-        __Pyx_GOTREF(__pyx_t_18);
-        __pyx_t_19 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Stats_error, __pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 157, __pyx_L22_error)
-        __Pyx_GOTREF(__pyx_t_19);
-        __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-        __pyx_t_7 = 1;
+        __pyx_t_14 = __pyx_builtin_print; 
+        __pyx_t_15 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_v_e, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 131, __pyx_L18_error)
+        __Pyx_GOTREF(__pyx_t_15);
+        __pyx_t_16 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Stats_error, __pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 131, __pyx_L18_error)
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __pyx_t_6 = 1;
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_16, __pyx_t_19};
-          __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_17, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 157, __pyx_L22_error)
-          __Pyx_GOTREF(__pyx_t_10);
+          PyObject *__pyx_callargs[2] = {__pyx_t_13, __pyx_t_16};
+          __pyx_t_9 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 131, __pyx_L18_error)
+          __Pyx_GOTREF(__pyx_t_9);
         }
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-        /* "src/cache_manager/cache_manager.pyx":158
+        /* "src/cache_manager/cache_manager.pyx":132
  *         except Exception as e:
  *             print(f"Stats error: {e}")
  *             return {"total_keys": 0, "error": str(e)}             # <<<<<<<<<<<<<<
 */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_10 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 158, __pyx_L22_error)
-        __Pyx_GOTREF(__pyx_t_10);
-        if (PyDict_SetItem(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_total_keys, __pyx_mstate_global->__pyx_int_0) < 0) __PYX_ERR(0, 158, __pyx_L22_error)
-        __pyx_t_17 = __Pyx_PyObject_Unicode(__pyx_cur_scope->__pyx_v_e); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 158, __pyx_L22_error)
-        __Pyx_GOTREF(__pyx_t_17);
-        if (PyDict_SetItem(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_error, __pyx_t_17) < 0) __PYX_ERR(0, 158, __pyx_L22_error)
-        __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-        __pyx_r = ((PyObject*)__pyx_t_10);
-        __pyx_t_10 = 0;
+        __pyx_t_9 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 132, __pyx_L18_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        if (PyDict_SetItem(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_total_keys, __pyx_mstate_global->__pyx_int_0) < 0) __PYX_ERR(0, 132, __pyx_L18_error)
+        __pyx_t_14 = __Pyx_PyObject_Unicode(__pyx_cur_scope->__pyx_v_e); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 132, __pyx_L18_error)
+        __Pyx_GOTREF(__pyx_t_14);
+        if (PyDict_SetItem(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_error, __pyx_t_14) < 0) __PYX_ERR(0, 132, __pyx_L18_error)
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_r = ((PyObject*)__pyx_t_9);
+        __pyx_t_9 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L21_return;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        goto __pyx_L17_return;
       }
 
-      /* "src/cache_manager/cache_manager.pyx":156
- *                     "cluster_mode": False
- *                 }
+      /* "src/cache_manager/cache_manager.pyx":130
+ *                 "cluster_mode": self.use_cluster
+ *             }
  *         except Exception as e:             # <<<<<<<<<<<<<<
  *             print(f"Stats error: {e}")
  *             return {"total_keys": 0, "error": str(e)}
 */
       /*finally:*/ {
-        __pyx_L22_error:;
+        __pyx_L18_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_assign
-          __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0; __pyx_t_25 = 0; __pyx_t_26 = 0; __pyx_t_27 = 0;
-          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0;
+          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
-          __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-           __Pyx_ExceptionSwap(&__pyx_t_25, &__pyx_t_26, &__pyx_t_27);
-          if ( unlikely(__Pyx_GetException(&__pyx_t_22, &__pyx_t_23, &__pyx_t_24) < 0)) __Pyx_ErrFetch(&__pyx_t_22, &__pyx_t_23, &__pyx_t_24);
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+           __Pyx_ExceptionSwap(&__pyx_t_22, &__pyx_t_23, &__pyx_t_24);
+          if ( unlikely(__Pyx_GetException(&__pyx_t_19, &__pyx_t_20, &__pyx_t_21) < 0)) __Pyx_ErrFetch(&__pyx_t_19, &__pyx_t_20, &__pyx_t_21);
+          __Pyx_XGOTREF(__pyx_t_19);
+          __Pyx_XGOTREF(__pyx_t_20);
+          __Pyx_XGOTREF(__pyx_t_21);
           __Pyx_XGOTREF(__pyx_t_22);
           __Pyx_XGOTREF(__pyx_t_23);
           __Pyx_XGOTREF(__pyx_t_24);
-          __Pyx_XGOTREF(__pyx_t_25);
-          __Pyx_XGOTREF(__pyx_t_26);
-          __Pyx_XGOTREF(__pyx_t_27);
-          __pyx_t_15 = __pyx_lineno; __pyx_t_20 = __pyx_clineno; __pyx_t_21 = __pyx_filename;
+          __pyx_t_12 = __pyx_lineno; __pyx_t_17 = __pyx_clineno; __pyx_t_18 = __pyx_filename;
           {
             __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
             __Pyx_DECREF(__pyx_cur_scope->__pyx_v_e); __pyx_cur_scope->__pyx_v_e = 0;
           }
-          __Pyx_XGIVEREF(__pyx_t_25);
-          __Pyx_XGIVEREF(__pyx_t_26);
-          __Pyx_XGIVEREF(__pyx_t_27);
-          __Pyx_ExceptionReset(__pyx_t_25, __pyx_t_26, __pyx_t_27);
           __Pyx_XGIVEREF(__pyx_t_22);
           __Pyx_XGIVEREF(__pyx_t_23);
           __Pyx_XGIVEREF(__pyx_t_24);
-          __Pyx_ErrRestore(__pyx_t_22, __pyx_t_23, __pyx_t_24);
-          __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0; __pyx_t_25 = 0; __pyx_t_26 = 0; __pyx_t_27 = 0;
-          __pyx_lineno = __pyx_t_15; __pyx_clineno = __pyx_t_20; __pyx_filename = __pyx_t_21;
+          __Pyx_ExceptionReset(__pyx_t_22, __pyx_t_23, __pyx_t_24);
+          __Pyx_XGIVEREF(__pyx_t_19);
+          __Pyx_XGIVEREF(__pyx_t_20);
+          __Pyx_XGIVEREF(__pyx_t_21);
+          __Pyx_ErrRestore(__pyx_t_19, __pyx_t_20, __pyx_t_21);
+          __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0; __pyx_t_23 = 0; __pyx_t_24 = 0;
+          __pyx_lineno = __pyx_t_12; __pyx_clineno = __pyx_t_17; __pyx_filename = __pyx_t_18;
           goto __pyx_L6_except_error;
         }
-        __pyx_L21_return: {
-          __pyx_t_28 = __pyx_r;
+        __pyx_L17_return: {
+          __pyx_t_25 = __pyx_r;
           __pyx_r = 0;
           __Pyx_GOTREF(__pyx_cur_scope->__pyx_v_e);
           __Pyx_DECREF(__pyx_cur_scope->__pyx_v_e); __pyx_cur_scope->__pyx_v_e = 0;
-          __pyx_r = __pyx_t_28;
-          __pyx_t_28 = 0;
+          __pyx_r = __pyx_t_25;
+          __pyx_t_25 = 0;
           goto __pyx_L7_except_return;
         }
       }
     }
     goto __pyx_L6_except_error;
 
-    /* "src/cache_manager/cache_manager.pyx":132
+    /* "src/cache_manager/cache_manager.pyx":116
  *     async def get_stats(self) -> Dict[str, int]:
  *         """Get cache statistics"""
  *         try:             # <<<<<<<<<<<<<<
- *             if self.redis_cluster:
- *                 total_keys = 0
+ *             cursor = b'0'
+ *             total_keys = 0
 */
     __pyx_L6_except_error:;
     __Pyx_XGIVEREF(__pyx_t_1);
@@ -8011,7 +7526,7 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "src/cache_manager/cache_manager.pyx":130
+  /* "src/cache_manager/cache_manager.pyx":114
  *             return False
  * 
  *     async def get_stats(self) -> Dict[str, int]:             # <<<<<<<<<<<<<<
@@ -8021,14 +7536,14 @@ static PyObject *__pyx_gb_3src_13cache_manager_13cache_manager_12CacheManager_24
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_XDECREF(__pyx_t_14);
+  __Pyx_XDECREF(__pyx_t_15);
   __Pyx_XDECREF(__pyx_t_16);
-  __Pyx_XDECREF(__pyx_t_17);
-  __Pyx_XDECREF(__pyx_t_18);
-  __Pyx_XDECREF(__pyx_t_19);
   if (__Pyx_PyErr_Occurred()) {
     __Pyx_Generator_Replace_StopIteration(0);
     __Pyx_AddTraceback("get_stats", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -8102,8 +7617,9 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   int __pyx_t_5;
+  int __pyx_t_6;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -8112,7 +7628,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
   /* "(tree fragment)":5
  *     cdef object _dict
  *     cdef bint use_setstate
- *     state = (self.default_ttl, self.redis_client, self.redis_cluster, self.redis_host, self.redis_port)             # <<<<<<<<<<<<<<
+ *     state = (self.default_ttl, self.redis_client, self.redis_host, self.redis_port, self.use_cluster)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
 */
@@ -8120,47 +7636,49 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_self->redis_port); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_self->use_cluster); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyTuple_New(5); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_self->redis_client);
   __Pyx_GIVEREF(__pyx_v_self->redis_client);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_self->redis_client) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
-  __Pyx_INCREF(__pyx_v_self->redis_cluster);
-  __Pyx_GIVEREF(__pyx_v_self->redis_cluster);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_v_self->redis_cluster) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_self->redis_client) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_self->redis_host);
   __Pyx_GIVEREF(__pyx_v_self->redis_host);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 3, __pyx_v_self->redis_host) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_v_self->redis_host) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 4, __pyx_t_2) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_t_2) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
+  __Pyx_GIVEREF(__pyx_t_3);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 4, __pyx_t_3) != (0)) __PYX_ERR(1, 5, __pyx_L1_error);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_v_state = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
+  __pyx_v_state = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
 
   /* "(tree fragment)":6
  *     cdef bint use_setstate
- *     state = (self.default_ttl, self.redis_client, self.redis_cluster, self.redis_host, self.redis_port)
+ *     state = (self.default_ttl, self.redis_client, self.redis_host, self.redis_port, self.use_cluster)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
 */
-  __pyx_t_3 = __Pyx_GetAttr3(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_dict, Py_None); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 6, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_v__dict = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_GetAttr3(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_dict, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_v__dict = __pyx_t_4;
+  __pyx_t_4 = 0;
 
   /* "(tree fragment)":7
- *     state = (self.default_ttl, self.redis_client, self.redis_cluster, self.redis_host, self.redis_port)
+ *     state = (self.default_ttl, self.redis_client, self.redis_host, self.redis_port, self.use_cluster)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
  *         use_setstate = True
 */
-  __pyx_t_4 = (__pyx_v__dict != Py_None);
-  if (__pyx_t_4) {
+  __pyx_t_5 = (__pyx_v__dict != Py_None);
+  if (__pyx_t_5) {
 
     /* "(tree fragment)":8
  *     _dict = getattr(self, '__dict__', None)
@@ -8169,28 +7687,28 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
  *         use_setstate = True
  *     else:
 */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v__dict);
     __Pyx_GIVEREF(__pyx_v__dict);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v__dict) != (0)) __PYX_ERR(1, 8, __pyx_L1_error);
-    __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_v_state, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_state, ((PyObject*)__pyx_t_2));
-    __pyx_t_2 = 0;
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v__dict) != (0)) __PYX_ERR(1, 8, __pyx_L1_error);
+    __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_v_state, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF_SET(__pyx_v_state, ((PyObject*)__pyx_t_3));
+    __pyx_t_3 = 0;
 
     /* "(tree fragment)":9
  *     if _dict is not None:
  *         state += (_dict,)
  *         use_setstate = True             # <<<<<<<<<<<<<<
  *     else:
- *         use_setstate = self.redis_client is not None or self.redis_cluster is not None or self.redis_host is not None
+ *         use_setstate = self.redis_client is not None or self.redis_host is not None
 */
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":7
- *     state = (self.default_ttl, self.redis_client, self.redis_cluster, self.redis_host, self.redis_port)
+ *     state = (self.default_ttl, self.redis_client, self.redis_host, self.redis_port, self.use_cluster)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -8202,116 +7720,110 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
   /* "(tree fragment)":11
  *         use_setstate = True
  *     else:
- *         use_setstate = self.redis_client is not None or self.redis_cluster is not None or self.redis_host is not None             # <<<<<<<<<<<<<<
+ *         use_setstate = self.redis_client is not None or self.redis_host is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, None), state
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, None), state
 */
   /*else*/ {
-    __pyx_t_5 = (__pyx_v_self->redis_client != Py_None);
-    if (!__pyx_t_5) {
+    __pyx_t_6 = (__pyx_v_self->redis_client != Py_None);
+    if (!__pyx_t_6) {
     } else {
-      __pyx_t_4 = __pyx_t_5;
+      __pyx_t_5 = __pyx_t_6;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_5 = (__pyx_v_self->redis_cluster != Py_None);
-    if (!__pyx_t_5) {
-    } else {
-      __pyx_t_4 = __pyx_t_5;
-      goto __pyx_L4_bool_binop_done;
-    }
-    __pyx_t_5 = (__pyx_v_self->redis_host != ((PyObject*)Py_None));
-    __pyx_t_4 = __pyx_t_5;
+    __pyx_t_6 = (__pyx_v_self->redis_host != ((PyObject*)Py_None));
+    __pyx_t_5 = __pyx_t_6;
     __pyx_L4_bool_binop_done:;
-    __pyx_v_use_setstate = __pyx_t_4;
+    __pyx_v_use_setstate = __pyx_t_5;
   }
   __pyx_L3:;
 
   /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.redis_client is not None or self.redis_cluster is not None or self.redis_host is not None
+ *         use_setstate = self.redis_client is not None or self.redis_host is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, None), state
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, None), state
  *     else:
 */
   if (__pyx_v_use_setstate) {
 
     /* "(tree fragment)":13
- *         use_setstate = self.redis_client is not None or self.redis_cluster is not None or self.redis_host is not None
+ *         use_setstate = self.redis_client is not None or self.redis_host is not None
  *     if use_setstate:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)
 */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_CacheManager); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 13, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_CacheManager); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 13, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self)))) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
-    __Pyx_INCREF(__pyx_mstate_global->__pyx_int_238143301);
-    __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_238143301);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_mstate_global->__pyx_int_238143301) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self)))) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    __Pyx_INCREF(__pyx_mstate_global->__pyx_int_248923345);
+    __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_248923345);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_mstate_global->__pyx_int_248923345) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 2, Py_None) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
-    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 13, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_2);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 2, Py_None) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_3);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_3) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_3) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
+    __Pyx_GIVEREF(__pyx_t_4);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_4) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_v_state) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
-    __pyx_t_2 = 0;
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 2, __pyx_v_state) != (0)) __PYX_ERR(1, 13, __pyx_L1_error);
     __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
     goto __pyx_L0;
 
     /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.redis_client is not None or self.redis_cluster is not None or self.redis_host is not None
+ *         use_setstate = self.redis_client is not None or self.redis_host is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, None), state
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, None), state
  *     else:
 */
   }
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, None), state
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, None), state
  *     else:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_CacheManager__set_state(self, __pyx_state)
 */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_CacheManager); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_CacheManager); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self)))) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
-    __Pyx_INCREF(__pyx_mstate_global->__pyx_int_238143301);
-    __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_238143301);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_mstate_global->__pyx_int_238143301) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self)))) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
+    __Pyx_INCREF(__pyx_mstate_global->__pyx_int_248923345);
+    __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_248923345);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_mstate_global->__pyx_int_248923345) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_v_state) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_GIVEREF(__pyx_t_1);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
-    __Pyx_GIVEREF(__pyx_t_3);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_3) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
-    __pyx_t_1 = 0;
-    __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_2;
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_v_state) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_2);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
+    __Pyx_GIVEREF(__pyx_t_4);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_4) != (0)) __PYX_ERR(1, 15, __pyx_L1_error);
     __pyx_t_2 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = __pyx_t_3;
+    __pyx_t_3 = 0;
     goto __pyx_L0;
   }
 
@@ -8326,6 +7838,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("src.cache_manager.cache_manager.CacheManager.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -8338,7 +7851,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_25
 
 /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_CacheManager__set_state(self, __pyx_state)
 */
@@ -8439,7 +7952,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_27
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":17
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_CacheManager__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
 */
@@ -8450,7 +7963,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager_12CacheManager_27
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_CacheManager__set_state(self, __pyx_state)
 */
@@ -8593,9 +8106,9 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0xe31c745, 0x20924e5, 0x505b760):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0xed644d1, 0x1439773, 0xd042863):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
 */
   __pyx_t_1 = __Pyx_PyLong_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -8605,9 +8118,9 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
 
     /* "(tree fragment)":5
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0xe31c745, 0x20924e5, 0x505b760):
+ *     if __pyx_checksum not in (0xed644d1, 0x1439773, 0xd042863):
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
  *     __pyx_result = CacheManager.__new__(__pyx_type)
 */
     __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
@@ -8626,9 +8139,9 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":6
- *     if __pyx_checksum not in (0xe31c745, 0x20924e5, 0x505b760):
+ *     if __pyx_checksum not in (0xed644d1, 0x1439773, 0xd042863):
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum             # <<<<<<<<<<<<<<
  *     __pyx_result = CacheManager.__new__(__pyx_type)
  *     if __pyx_state is not None:
 */
@@ -8644,15 +8157,15 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
     /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0xe31c745, 0x20924e5, 0x505b760):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0xed644d1, 0x1439773, 0xd042863):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
 */
   }
 
   /* "(tree fragment)":7
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
  *     __pyx_result = CacheManager.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
@@ -8671,7 +8184,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
   __pyx_t_1 = 0;
 
   /* "(tree fragment)":8
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
  *     __pyx_result = CacheManager.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
@@ -8693,7 +8206,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "(tree fragment)":8
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
  *     __pyx_result = CacheManager.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
@@ -8706,7 +8219,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
 */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -8737,7 +8250,7 @@ static PyObject *__pyx_pf_3src_13cache_manager_13cache_manager___pyx_unpickle_Ca
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
 */
 
@@ -8761,7 +8274,7 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
   /* "(tree fragment)":12
  *     return __pyx_result
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]             # <<<<<<<<<<<<<<
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]             # <<<<<<<<<<<<<<
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[5])
 */
@@ -8791,17 +8304,6 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 2, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __Pyx_GOTREF(__pyx_v___pyx_result->redis_cluster);
-  __Pyx_DECREF(__pyx_v___pyx_result->redis_cluster);
-  __pyx_v___pyx_result->redis_cluster = __pyx_t_1;
-  __pyx_t_1 = 0;
-  if (unlikely(__pyx_v___pyx_state == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(1, 12, __pyx_L1_error)
-  }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->redis_host);
@@ -8812,15 +8314,24 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->redis_port = __pyx_t_2;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v___pyx_result->use_cluster = __pyx_t_3;
 
   /* "(tree fragment)":13
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[5])
 */
@@ -8841,7 +8352,7 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
   if (__pyx_t_3) {
 
     /* "(tree fragment)":14
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[5])             # <<<<<<<<<<<<<<
 */
@@ -8869,7 +8380,7 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
 
     /* "(tree fragment)":13
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[5])
 */
@@ -8879,7 +8390,7 @@ static PyObject *__pyx_f_3src_13cache_manager_13cache_manager___pyx_unpickle_Cac
  *         __pyx_unpickle_CacheManager__set_state(<CacheManager> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_CacheManager__set_state(CacheManager __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_cluster = __pyx_state[2]; __pyx_result.redis_host = __pyx_state[3]; __pyx_result.redis_port = __pyx_state[4]
+ *     __pyx_result.default_ttl = __pyx_state[0]; __pyx_result.redis_client = __pyx_state[1]; __pyx_result.redis_host = __pyx_state[2]; __pyx_result.redis_port = __pyx_state[3]; __pyx_result.use_cluster = __pyx_state[4]
  *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
 */
 
@@ -8919,7 +8430,6 @@ static PyObject *__pyx_tp_new_3src_13cache_manager_13cache_manager_CacheManager(
   p->__pyx_vtab = __pyx_vtabptr_3src_13cache_manager_13cache_manager_CacheManager;
   p->redis_client = Py_None; Py_INCREF(Py_None);
   p->redis_host = ((PyObject*)Py_None); Py_INCREF(Py_None);
-  p->redis_cluster = Py_None; Py_INCREF(Py_None);
   return o;
 }
 
@@ -8935,7 +8445,6 @@ static void __pyx_tp_dealloc_3src_13cache_manager_13cache_manager_CacheManager(P
   PyObject_GC_UnTrack(o);
   Py_CLEAR(p->redis_client);
   Py_CLEAR(p->redis_host);
-  Py_CLEAR(p->redis_cluster);
   #if CYTHON_USE_TYPE_SLOTS
   (*Py_TYPE(o)->tp_free)(o);
   #else
@@ -8956,9 +8465,6 @@ static int __pyx_tp_traverse_3src_13cache_manager_13cache_manager_CacheManager(P
   if (p->redis_client) {
     e = (*v)(p->redis_client, a); if (e) return e;
   }
-  if (p->redis_cluster) {
-    e = (*v)(p->redis_cluster, a); if (e) return e;
-  }
   return 0;
 }
 
@@ -8967,9 +8473,6 @@ static int __pyx_tp_clear_3src_13cache_manager_13cache_manager_CacheManager(PyOb
   struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *p = (struct __pyx_obj_3src_13cache_manager_13cache_manager_CacheManager *)o;
   tmp = ((PyObject*)p->redis_client);
   p->redis_client = Py_None; Py_INCREF(Py_None);
-  Py_XDECREF(tmp);
-  tmp = ((PyObject*)p->redis_cluster);
-  p->redis_cluster = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   return 0;
 }
@@ -9962,7 +9465,6 @@ static void __pyx_tp_dealloc_3src_13cache_manager_13cache_manager___pyx_scope_st
   Py_CLEAR(p->__pyx_v_cursor);
   Py_CLEAR(p->__pyx_v_e);
   Py_CLEAR(p->__pyx_v_keys);
-  Py_CLEAR(p->__pyx_v_node);
   Py_CLEAR(p->__pyx_v_self);
   Py_CLEAR(p->__pyx_t_0);
   Py_CLEAR(p->__pyx_t_1);
@@ -9999,9 +9501,6 @@ static int __pyx_tp_traverse_3src_13cache_manager_13cache_manager___pyx_scope_st
   }
   if (p->__pyx_v_keys) {
     e = (*v)(p->__pyx_v_keys, a); if (e) return e;
-  }
-  if (p->__pyx_v_node) {
-    e = (*v)(p->__pyx_v_node, a); if (e) return e;
   }
   if (p->__pyx_v_self) {
     e = (*v)(((PyObject *)p->__pyx_v_self), a); if (e) return e;
@@ -10146,9 +9645,7 @@ static void __pyx_tp_dealloc_3src_13cache_manager_13cache_manager___pyx_scope_st
   Py_CLEAR(p->__pyx_v_cursor);
   Py_CLEAR(p->__pyx_v_e);
   Py_CLEAR(p->__pyx_v_keys);
-  Py_CLEAR(p->__pyx_v_node);
   Py_CLEAR(p->__pyx_v_self);
-  Py_CLEAR(p->__pyx_v_total_keys);
   Py_CLEAR(p->__pyx_t_0);
   Py_CLEAR(p->__pyx_t_1);
   Py_CLEAR(p->__pyx_t_2);
@@ -10185,14 +9682,8 @@ static int __pyx_tp_traverse_3src_13cache_manager_13cache_manager___pyx_scope_st
   if (p->__pyx_v_keys) {
     e = (*v)(p->__pyx_v_keys, a); if (e) return e;
   }
-  if (p->__pyx_v_node) {
-    e = (*v)(p->__pyx_v_node, a); if (e) return e;
-  }
   if (p->__pyx_v_self) {
     e = (*v)(((PyObject *)p->__pyx_v_self), a); if (e) return e;
-  }
-  if (p->__pyx_v_total_keys) {
-    e = (*v)(p->__pyx_v_total_keys, a); if (e) return e;
   }
   if (p->__pyx_t_0) {
     e = (*v)(p->__pyx_t_0, a); if (e) return e;
@@ -10376,15 +9867,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_CacheManager, (PyObject *) __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect)) __PYX_ERR(0, 32, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect)) __PYX_ERR(0, 24, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect = &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect->tp_dictoffset && __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct__connect->tp_getattro == PyObject_GenericGetAttr)) {
@@ -10424,15 +9915,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   }
   #endif
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set)) __PYX_ERR(0, 77, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set)) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set = &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set->tp_dictoffset && __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_3_set->tp_getattro == PyObject_GenericGetAttr)) {
@@ -10440,15 +9931,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   }
   #endif
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete)) __PYX_ERR(0, 94, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete)) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete = &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete->tp_dictoffset && __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_4_delete->tp_getattro == PyObject_GenericGetAttr)) {
@@ -10456,15 +9947,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   }
   #endif
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all)) __PYX_ERR(0, 104, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all)) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all = &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all->tp_dictoffset && __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_5_clear_all->tp_getattro == PyObject_GenericGetAttr)) {
@@ -10472,15 +9963,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   }
   #endif
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats)) __PYX_ERR(0, 130, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats)) __PYX_ERR(0, 114, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats_spec, __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats) < 0) __PYX_ERR(0, 114, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats = &__pyx_type_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats) < 0) __PYX_ERR(0, 114, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats->tp_dictoffset && __pyx_mstate->__pyx_ptype_3src_13cache_manager_13cache_manager___pyx_scope_struct_6_get_stats->tp_getattro == PyObject_GenericGetAttr)) {
@@ -10806,7 +10297,7 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
 
   /* "src/cache_manager/cache_manager.pyx":1
  * import redis.asyncio as aioredis             # <<<<<<<<<<<<<<
- * from redis.cluster import RedisCluster
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster
  * import hashlib
 */
   __pyx_t_2 = __Pyx_ImportDottedModule(__pyx_mstate_global->__pyx_n_u_redis_asyncio, __pyx_mstate_global->__pyx_tuple[1]); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -10816,24 +10307,24 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
 
   /* "src/cache_manager/cache_manager.pyx":2
  * import redis.asyncio as aioredis
- * from redis.cluster import RedisCluster             # <<<<<<<<<<<<<<
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster             # <<<<<<<<<<<<<<
  * import hashlib
  * import json
 */
   __pyx_t_2 = __Pyx_PyList_Pack(1, __pyx_mstate_global->__pyx_n_u_RedisCluster); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_Import(__pyx_mstate_global->__pyx_n_u_redis_cluster, __pyx_t_2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_Import(__pyx_mstate_global->__pyx_n_u_redis_asyncio_cluster, __pyx_t_2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_RedisCluster); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_RedisCluster, __pyx_t_2) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_AsyncRedisCluster, __pyx_t_2) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "src/cache_manager/cache_manager.pyx":3
  * import redis.asyncio as aioredis
- * from redis.cluster import RedisCluster
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster
  * import hashlib             # <<<<<<<<<<<<<<
  * import json
  * import pickle
@@ -10844,7 +10335,7 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "src/cache_manager/cache_manager.pyx":4
- * from redis.cluster import RedisCluster
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster
  * import hashlib
  * import json             # <<<<<<<<<<<<<<
  * import pickle
@@ -10897,20 +10388,20 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/cache_manager/cache_manager.pyx":32
- *                 )
+  /* "src/cache_manager/cache_manager.pyx":24
+ *             self.use_cluster = use_cluster
  * 
  *     async def connect(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client is None:
- *             self.redis_client = await aioredis.from_url(
+ *             if self.use_cluster:
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_3connect, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_connect, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_3connect, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_connect, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_connect, __pyx_t_2) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_connect, __pyx_t_2) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "src/cache_manager/cache_manager.pyx":40
- *             )
+ *                 )
  * 
  *     async def close(self):             # <<<<<<<<<<<<<<
  *         if self.redis_client:
@@ -10939,7 +10430,7 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
  * 
  *     async def get(self, str cache_key) -> Optional[Dict[str, Any]]:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             data = await self.redis_client.get(cache_key)
 */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -10951,68 +10442,68 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
   if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_get, __pyx_t_3) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "src/cache_manager/cache_manager.pyx":77
+  /* "src/cache_manager/cache_manager.pyx":74
  * 
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):             # <<<<<<<<<<<<<<
  *         try:
  *             if ttl == -1:
 */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_14set, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_set, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_14set, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_set, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_mstate_global->__pyx_tuple[3]);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_set, __pyx_t_3) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_set, __pyx_t_3) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "src/cache_manager/cache_manager.pyx":94
+  /* "src/cache_manager/cache_manager.pyx":88
  * 
  * 
  *     async def delete(self, str cache_key) -> bool:             # <<<<<<<<<<<<<<
  *         try:
- *             if self.redis_cluster:
+ *             return bool(await self.redis_client.delete(cache_key))
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_bool) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_17delete, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_delete, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_bool) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_17delete, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_delete, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_delete, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_delete, __pyx_t_2) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/cache_manager/cache_manager.pyx":104
+  /* "src/cache_manager/cache_manager.pyx":95
  *             return False
  * 
  *     async def clear_all(self) -> bool:             # <<<<<<<<<<<<<<
  *         """Clear all cache entries"""
  *         try:
 */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_bool) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_20clear_all, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_clear_all, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_bool) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_20clear_all, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_clear_all, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_clear_all, __pyx_t_3) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_clear_all, __pyx_t_3) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "src/cache_manager/cache_manager.pyx":130
+  /* "src/cache_manager/cache_manager.pyx":114
  *             return False
  * 
  *     async def get_stats(self) -> Dict[str, int]:             # <<<<<<<<<<<<<<
  *         """Get cache statistics"""
  *         try:
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_kp_u_Dict_str_int) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_23get_stats, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_get_stats, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_kp_u_Dict_str_int) < 0) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_3src_13cache_manager_13cache_manager_12CacheManager_23get_stats, __Pyx_CYFUNCTION_CCLASS | __Pyx_CYFUNCTION_COROUTINE, __pyx_mstate_global->__pyx_n_u_CacheManager_get_stats, NULL, __pyx_mstate_global->__pyx_n_u_src_cache_manager_cache_manager, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_get_stats, __pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_3src_13cache_manager_13cache_manager_CacheManager, __pyx_mstate_global->__pyx_n_u_get_stats, __pyx_t_2) < 0) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":1
@@ -11027,7 +10518,7 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_CacheManager, (type(self), 0xe31c745, state)
+ *         return __pyx_unpickle_CacheManager, (type(self), 0xed644d1, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_CacheManager__set_state(self, __pyx_state)
 */
@@ -11048,7 +10539,7 @@ __Pyx_RefNannySetupContext("PyInit_cache_manager", 0);
 
   /* "src/cache_manager/cache_manager.pyx":1
  * import redis.asyncio as aioredis             # <<<<<<<<<<<<<<
- * from redis.cluster import RedisCluster
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster
  * import hashlib
 */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -11118,6 +10609,7 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_, sizeof(__pyx_k_), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_ */
   {__pyx_k_0, sizeof(__pyx_k_0), 0, 0, 0}, /* PyObject cname: __pyx_kp_b_0 */
   {__pyx_k_Any, sizeof(__pyx_k_Any), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Any */
+  {__pyx_k_AsyncRedisCluster, sizeof(__pyx_k_AsyncRedisCluster), 0, 1, 1}, /* PyObject cname: __pyx_n_u_AsyncRedisCluster */
   {__pyx_k_CacheManager, sizeof(__pyx_k_CacheManager), 0, 1, 1}, /* PyObject cname: __pyx_n_u_CacheManager */
   {__pyx_k_CacheManager___reduce_cython, sizeof(__pyx_k_CacheManager___reduce_cython), 0, 1, 1}, /* PyObject cname: __pyx_n_u_CacheManager___reduce_cython */
   {__pyx_k_CacheManager___setstate_cython, sizeof(__pyx_k_CacheManager___setstate_cython), 0, 1, 1}, /* PyObject cname: __pyx_n_u_CacheManager___setstate_cython */
@@ -11158,7 +10650,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_bool, sizeof(__pyx_k_bool), 0, 1, 1}, /* PyObject cname: __pyx_n_u_bool */
   {__pyx_k_cache, sizeof(__pyx_k_cache), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_cache */
   {__pyx_k_cache_2, sizeof(__pyx_k_cache_2), 0, 0, 0}, /* PyObject cname: __pyx_kp_b_cache_2 */
-  {__pyx_k_cache_2, sizeof(__pyx_k_cache_2), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_cache_2 */
   {__pyx_k_cache_key, sizeof(__pyx_k_cache_key), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cache_key */
   {__pyx_k_clear_all, sizeof(__pyx_k_clear_all), 0, 1, 1}, /* PyObject cname: __pyx_n_u_clear_all */
   {__pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cline_in_traceback */
@@ -11169,7 +10660,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_count, sizeof(__pyx_k_count), 0, 1, 1}, /* PyObject cname: __pyx_n_u_count */
   {__pyx_k_cursor, sizeof(__pyx_k_cursor), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cursor */
   {__pyx_k_data, sizeof(__pyx_k_data), 0, 1, 1}, /* PyObject cname: __pyx_n_u_data */
-  {__pyx_k_decode_response, sizeof(__pyx_k_decode_response), 0, 1, 1}, /* PyObject cname: __pyx_n_u_decode_response */
   {__pyx_k_decode_responses, sizeof(__pyx_k_decode_responses), 0, 1, 1}, /* PyObject cname: __pyx_n_u_decode_responses */
   {__pyx_k_default_ttl, sizeof(__pyx_k_default_ttl), 0, 1, 1}, /* PyObject cname: __pyx_n_u_default_ttl */
   {__pyx_k_delete, sizeof(__pyx_k_delete), 0, 1, 1}, /* PyObject cname: __pyx_n_u_delete */
@@ -11186,13 +10676,11 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_gc, sizeof(__pyx_k_gc), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_gc */
   {__pyx_k_generate_cache_key, sizeof(__pyx_k_generate_cache_key), 0, 1, 1}, /* PyObject cname: __pyx_n_u_generate_cache_key */
   {__pyx_k_get, sizeof(__pyx_k_get), 0, 1, 1}, /* PyObject cname: __pyx_n_u_get */
-  {__pyx_k_get_nodes, sizeof(__pyx_k_get_nodes), 0, 1, 1}, /* PyObject cname: __pyx_n_u_get_nodes */
   {__pyx_k_get_stats, sizeof(__pyx_k_get_stats), 0, 1, 1}, /* PyObject cname: __pyx_n_u_get_stats */
   {__pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 1, 1}, /* PyObject cname: __pyx_n_u_getstate */
   {__pyx_k_hashlib, sizeof(__pyx_k_hashlib), 0, 1, 1}, /* PyObject cname: __pyx_n_u_hashlib */
   {__pyx_k_header, sizeof(__pyx_k_header), 0, 1, 1}, /* PyObject cname: __pyx_n_u_header */
   {__pyx_k_hexdigest, sizeof(__pyx_k_hexdigest), 0, 1, 1}, /* PyObject cname: __pyx_n_u_hexdigest */
-  {__pyx_k_host, sizeof(__pyx_k_host), 0, 1, 1}, /* PyObject cname: __pyx_n_u_host */
   {__pyx_k_initializing, sizeof(__pyx_k_initializing), 0, 1, 1}, /* PyObject cname: __pyx_n_u_initializing */
   {__pyx_k_is_coroutine, sizeof(__pyx_k_is_coroutine), 0, 1, 1}, /* PyObject cname: __pyx_n_u_is_coroutine */
   {__pyx_k_isenabled, sizeof(__pyx_k_isenabled), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_isenabled */
@@ -11210,10 +10698,8 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_name, sizeof(__pyx_k_name), 0, 1, 1}, /* PyObject cname: __pyx_n_u_name */
   {__pyx_k_new, sizeof(__pyx_k_new), 0, 1, 1}, /* PyObject cname: __pyx_n_u_new */
   {__pyx_k_next, sizeof(__pyx_k_next), 0, 1, 1}, /* PyObject cname: __pyx_n_u_next */
-  {__pyx_k_node, sizeof(__pyx_k_node), 0, 1, 1}, /* PyObject cname: __pyx_n_u_node */
   {__pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pickle */
   {__pyx_k_pop, sizeof(__pyx_k_pop), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pop */
-  {__pyx_k_port, sizeof(__pyx_k_port), 0, 1, 1}, /* PyObject cname: __pyx_n_u_port */
   {__pyx_k_print, sizeof(__pyx_k_print), 0, 1, 1}, /* PyObject cname: __pyx_n_u_print */
   {__pyx_k_pyx_PickleError, sizeof(__pyx_k_pyx_PickleError), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_PickleError */
   {__pyx_k_pyx_checksum, sizeof(__pyx_k_pyx_checksum), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_checksum */
@@ -11226,8 +10712,7 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_redis, sizeof(__pyx_k_redis), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_redis */
   {__pyx_k_redis_2, sizeof(__pyx_k_redis_2), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_2 */
   {__pyx_k_redis_asyncio, sizeof(__pyx_k_redis_asyncio), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_asyncio */
-  {__pyx_k_redis_cluster, sizeof(__pyx_k_redis_cluster), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_cluster */
-  {__pyx_k_redis_connection, sizeof(__pyx_k_redis_connection), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_connection */
+  {__pyx_k_redis_asyncio_cluster, sizeof(__pyx_k_redis_asyncio_cluster), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_asyncio_cluster */
   {__pyx_k_redis_host, sizeof(__pyx_k_redis_host), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_host */
   {__pyx_k_redis_port, sizeof(__pyx_k_redis_port), 0, 1, 1}, /* PyObject cname: __pyx_n_u_redis_port */
   {__pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 1, 1}, /* PyObject cname: __pyx_n_u_reduce */
@@ -11271,7 +10756,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry const *t, PyObject **target, c
 
 static int __Pyx_InitCachedBuiltins(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_print); if (!__pyx_builtin_print) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_print); if (!__pyx_builtin_print) __PYX_ERR(0, 70, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -11286,17 +10771,17 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0xe31c745, 0x20924e5, 0x505b760):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0xed644d1, 0x1439773, 0xd042863):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xe31c745, 0x20924e5, 0x505b760) = (default_ttl, redis_client, redis_cluster, redis_host, redis_port))" % __pyx_checksum
+ *         raise __pyx_PickleError, "Incompatible checksums (0x%x vs (0xed644d1, 0x1439773, 0xd042863) = (default_ttl, redis_client, redis_host, redis_port, use_cluster))" % __pyx_checksum
 */
-  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(3, __pyx_mstate_global->__pyx_int_238143301, __pyx_mstate_global->__pyx_int_34153701, __pyx_mstate_global->__pyx_int_84260704); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(3, __pyx_mstate_global->__pyx_int_248923345, __pyx_mstate_global->__pyx_int_21206899, __pyx_mstate_global->__pyx_int_218376291); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[0]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[0]);
 
   /* "src/cache_manager/cache_manager.pyx":1
  * import redis.asyncio as aioredis             # <<<<<<<<<<<<<<
- * from redis.cluster import RedisCluster
+ * from redis.asyncio.cluster import RedisCluster as AsyncRedisCluster
  * import hashlib
 */
   __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_redis_2, __pyx_mstate_global->__pyx_n_u_asyncio); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -11314,14 +10799,14 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[2]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[2]);
 
-  /* "src/cache_manager/cache_manager.pyx":77
+  /* "src/cache_manager/cache_manager.pyx":74
  * 
  * 
  *     async def set(self, str cache_key, dict response_data, int ttl = -1):             # <<<<<<<<<<<<<<
  *         try:
  *             if ttl == -1:
 */
-  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(1, __pyx_mstate_global->__pyx_int_neg_1); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(1, __pyx_mstate_global->__pyx_int_neg_1); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[3]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[3]);
   __Pyx_RefNannyFinishContext();
@@ -11342,9 +10827,9 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   __pyx_mstate->__pyx_int_1000 = PyLong_FromLong(1000); if (unlikely(!__pyx_mstate->__pyx_int_1000)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_mstate->__pyx_int_3600 = PyLong_FromLong(3600); if (unlikely(!__pyx_mstate->__pyx_int_3600)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_mstate->__pyx_int_6379 = PyLong_FromLong(6379); if (unlikely(!__pyx_mstate->__pyx_int_6379)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_mstate->__pyx_int_34153701 = PyLong_FromLong(34153701L); if (unlikely(!__pyx_mstate->__pyx_int_34153701)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_mstate->__pyx_int_84260704 = PyLong_FromLong(84260704L); if (unlikely(!__pyx_mstate->__pyx_int_84260704)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_mstate->__pyx_int_238143301 = PyLong_FromLong(238143301L); if (unlikely(!__pyx_mstate->__pyx_int_238143301)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_mstate->__pyx_int_21206899 = PyLong_FromLong(21206899L); if (unlikely(!__pyx_mstate->__pyx_int_21206899)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_mstate->__pyx_int_218376291 = PyLong_FromLong(218376291L); if (unlikely(!__pyx_mstate->__pyx_int_218376291)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_mstate->__pyx_int_248923345 = PyLong_FromLong(248923345L); if (unlikely(!__pyx_mstate->__pyx_int_248923345)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_mstate->__pyx_int_neg_1 = PyLong_FromLong(-1); if (unlikely(!__pyx_mstate->__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -11358,7 +10843,7 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
             unsigned int num_kwonly_args : 1;
             unsigned int nlocals : 3;
             unsigned int flags : 10;
-            unsigned int first_line : 8;
+            unsigned int first_line : 7;
             unsigned int line_table_length : 12;
         } __Pyx_PyCode_New_function_description;
 /* NewCodeObj.proto */
@@ -11376,7 +10861,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   PyObject* tuple_dedup_map = PyDict_New();
   if (unlikely(!tuple_dedup_map)) return -1;
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 32, 2};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 24, 2};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
     __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_connect, __pyx_k__4, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
@@ -11391,23 +10876,23 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_get, __pyx_k__5, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 77, 5};
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 74, 5};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_cache_key, __pyx_mstate->__pyx_n_u_response_data, __pyx_mstate->__pyx_n_u_ttl, __pyx_mstate->__pyx_n_u_serialized, __pyx_mstate->__pyx_n_u_e};
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_set, __pyx_k_Fa, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 94, 5};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 88, 5};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_cache_key, __pyx_mstate->__pyx_n_u_e};
     __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_delete, __pyx_k_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 104, 5};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_keys, __pyx_mstate->__pyx_n_u_cursor, __pyx_mstate->__pyx_n_u_e};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 95, 5};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_cursor, __pyx_mstate->__pyx_n_u_keys, __pyx_mstate->__pyx_n_u_e};
     __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_clear_all, __pyx_k__6, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 130, 5};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_total_keys, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_keys, __pyx_mstate->__pyx_n_u_cursor, __pyx_mstate->__pyx_n_u_e};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS|CO_COROUTINE), 114, 5};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_cursor, __pyx_mstate->__pyx_n_u_total_keys, __pyx_mstate->__pyx_n_u_keys, __pyx_mstate->__pyx_n_u_e};
     __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_get_stats, __pyx_k__6, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
   }
   {
@@ -11416,9 +10901,9 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[7] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_cache_manager_cache_manager_2, __pyx_mstate->__pyx_n_u_generate_cache_key, __pyx_k_JJ_t_q_XQ, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[7])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1, 138};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1, 121};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_state, __pyx_mstate->__pyx_n_u_dict_2, __pyx_mstate->__pyx_n_u_use_setstate};
-    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_k_T_t_6Fd_W_G1F_a_vWA_q_t_S_O7RWW, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_k_T_t_m4_TXXY_G1F_a_vWA_q_t_S_L_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 16, 11};
@@ -11428,7 +10913,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   {
     const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1, 86};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_pyx_type, __pyx_mstate->__pyx_n_u_pyx_checksum, __pyx_mstate->__pyx_n_u_pyx_state, __pyx_mstate->__pyx_n_u_pyx_PickleError, __pyx_mstate->__pyx_n_u_pyx_result};
-    __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_pyx_unpickle_CacheManager, __pyx_k_hk_A_1_l_l_n_n_o_xq_7_a_nA_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_pyx_unpickle_CacheManager, __pyx_k_hk_A_1_j_j_l_l_m_xq_7_a_nA_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
   }
   Py_DECREF(tuple_dedup_map);
   return 0;
@@ -12739,6 +12224,27 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
     return 0;
 }
 
+/* RejectKeywords */
+static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds) {
+    PyObject *key = NULL;
+    if (CYTHON_METH_FASTCALL && likely(PyTuple_Check(kwds))) {
+        key = __Pyx_PySequence_ITEM(kwds, 0);
+    } else {
+        Py_ssize_t pos = 0;
+#if !CYTHON_COMPILING_IN_PYPY || defined(PyArg_ValidateKeywordArguments)
+        if (unlikely(!PyArg_ValidateKeywordArguments(kwds))) return;
+#endif
+        PyDict_Next(kwds, &pos, &key, NULL);
+        Py_INCREF(key);
+    }
+    if (likely(key)) {
+        PyErr_Format(PyExc_TypeError,
+            "%s() got an unexpected keyword argument '%U'",
+            function_name, key);
+        Py_DECREF(key);
+    }
+}
+
 /* PyDictVersioning */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
@@ -12799,59 +12305,6 @@ static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
     PyErr_Clear();
 #endif
     return __Pyx_GetBuiltinName(name);
-}
-
-/* PyObjectVectorCallKwBuilder */
-#if CYTHON_VECTORCALL
-static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-    (void)__Pyx_PyObject_FastCallDict;
-    if (__Pyx_PyTuple_SET_ITEM(builder, n, key) != (0)) return -1;
-    Py_INCREF(key);
-    args[n] = value;
-    return 0;
-}
-CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-    (void)__Pyx_VectorcallBuilder_AddArgStr;
-    if (unlikely(!PyUnicode_Check(key))) {
-        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
-        return -1;
-    }
-    return __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n);
-}
-static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-    PyObject *pyKey = PyUnicode_FromString(key);
-    if (!pyKey) return -1;
-    return __Pyx_VectorcallBuilder_AddArg(pyKey, value, builder, args, n);
-}
-#else // CYTHON_VECTORCALL
-CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, CYTHON_UNUSED PyObject **args, CYTHON_UNUSED int n) {
-    if (unlikely(!PyUnicode_Check(key))) {
-        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
-        return -1;
-    }
-    return PyDict_SetItem(builder, key, value);
-}
-#endif
-
-/* RejectKeywords */
-static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds) {
-    PyObject *key = NULL;
-    if (CYTHON_METH_FASTCALL && likely(PyTuple_Check(kwds))) {
-        key = __Pyx_PySequence_ITEM(kwds, 0);
-    } else {
-        Py_ssize_t pos = 0;
-#if !CYTHON_COMPILING_IN_PYPY || defined(PyArg_ValidateKeywordArguments)
-        if (unlikely(!PyArg_ValidateKeywordArguments(kwds))) return;
-#endif
-        PyDict_Next(kwds, &pos, &key, NULL);
-        Py_INCREF(key);
-    }
-    if (likely(key)) {
-        PyErr_Format(PyExc_TypeError,
-            "%s() got an unexpected keyword argument '%U'",
-            function_name, key);
-        Py_DECREF(key);
-    }
 }
 
 /* PyUnicode_Unicode */
@@ -13172,6 +12625,38 @@ bad:
     return result;
 #endif
 }
+
+/* PyObjectVectorCallKwBuilder */
+#if CYTHON_VECTORCALL
+static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    (void)__Pyx_PyObject_FastCallDict;
+    if (__Pyx_PyTuple_SET_ITEM(builder, n, key) != (0)) return -1;
+    Py_INCREF(key);
+    args[n] = value;
+    return 0;
+}
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    (void)__Pyx_VectorcallBuilder_AddArgStr;
+    if (unlikely(!PyUnicode_Check(key))) {
+        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
+        return -1;
+    }
+    return __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n);
+}
+static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    PyObject *pyKey = PyUnicode_FromString(key);
+    if (!pyKey) return -1;
+    return __Pyx_VectorcallBuilder_AddArg(pyKey, value, builder, args, n);
+}
+#else // CYTHON_VECTORCALL
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, CYTHON_UNUSED PyObject **args, CYTHON_UNUSED int n) {
+    if (unlikely(!PyUnicode_Check(key))) {
+        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
+        return -1;
+    }
+    return PyDict_SetItem(builder, key, value);
+}
+#endif
 
 /* LimitedApiGetTypeDict */
 #if CYTHON_COMPILING_IN_LIMITED_API

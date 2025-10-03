@@ -2,11 +2,11 @@
 
 import click
 import asyncio
-from src.cache_manager import CacheManager
-from src.load_balancer import LoadBalancer
-from src.server import Server
-from src.balance_strategy import BalancingStrategy
-from src.proxy_server import CachingProxyServer
+from src.cache_manager.cache_manager import CacheManager
+from src.load_balancer.load_balancer import LoadBalancer
+from src.load_balancer.server import Server
+from src.load_balancer.balance_strategy import BalancingStrategy
+from src.proxy_server.proxy_server import CachingProxyServer
 
 @click.group()
 def cli():
@@ -101,9 +101,9 @@ def clear_cache(redis_host, redis_port, use_cluster):
     success = asyncio.run(clear())
     
     if success:
-        click.echo("✓ Cache cleared successfully")
+        click.echo("Cache cleared successfully")
     else:
-        click.echo("✗ Error clearing cache")
+        click.echo("Error clearing cache")
 
 
 @cli.command()

@@ -160,6 +160,34 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Cython compiled files (project-specific)
+*.c
+*.cpp
+src/**/*.c
+src/**/*.cpp
+src/**/*.so
+src/**/*.pyd
+src/**/*.html
+
+# Redis data files
+*.rdb
+*.aof
+dump.rdb
+appendonly.aof
+nodes.conf
+nodes-*.conf
+image/redis-node-*.conf
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
